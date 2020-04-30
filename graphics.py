@@ -1,4 +1,8 @@
 # graphics.py
+
+# Shane Snediker and Stephen Haugland Artificial Intelligence Final Project
+# This is a library written by John Zelle that provides graphical functionality for our maze
+
 """Simple object oriented graphics library  
 
 The library is designed to make it very easy for novice programmers to
