@@ -1,7 +1,6 @@
-# Shane Snediker and Stephen Haugland Artificial Intelligence Final Project
-
-# This is a simple program for me to just mess around with graphics and try
-# to get an initial maze working 
+# Stephen Haugland and Shane Snediker
+# Artificial Intelligence Spring 2020
+# This file contains our main function and maze definition
 
 
 from graphics import *  # Accessing the graphical library functions
