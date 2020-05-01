@@ -6,111 +6,103 @@
 
 from graphics import *  # Accessing the graphical library functions
 
+# Define a function to easily create line objects
+def line(x1, y1, x2, y2):
+    return Line(Point (x1, y1), Point(x2, y2))
+
+
+# The main body of the program
 def main () :
     maze = GraphWin("My Window", 1000, 600)     # Create the initial window that will pop up on the screen
     maze.setBackground(color_rgb(0, 0, 0))       # Sets the background of the window to black
 
-    # Everything with python graphics runs off points.  You create Point objects and manipulate them
-    # The following is the part of the program where I use points to draw the maze lines
-    # I've separated the code into specific labeled areas
+    # The following is the part of the program where we use line objects to draw the maze lines
+    # I've separated the border walls and obstacles code segments
 
     # Left Wall border
     # Roughly halfway in the left wall there is a hole where the AI sprites will enter the maze
-    top_left_point = Point(0, 2)
-    left_mid_point = Point(0, 287)                                      # top of sprite hole begines at y coordinate 295
-    left_mid_top_point = Point(0, 308)                                  # bottom of sprite hole ends at y coordinate 301 
-    bottom_left_point = Point(0, 599)
-    left_top_line = Line(top_left_point, left_mid_point)
-    left_bottom_line = Line(left_mid_top_point, bottom_left_point)
-    left_top_line.setOutline(color_rgb(255, 0, 0))
-    left_bottom_line.setOutline(color_rgb(255, 0, 0))
-    left_top_line.draw(maze)
-    left_bottom_line.draw(maze)
+    left_top_border = line(0, 2, 0, 287)                                # top of sprite's entrance hole begins at y coordinate 287
+    left_bottom_border = line(0, 308, 0, 599)                           # bottom of sprite's entrance hole ends at y coordinate 308 
+    left_top_border.setOutline(color_rgb(255, 0, 0))
+    left_top_border.setWidth(5)
+    left_bottom_border.setOutline(color_rgb(255, 0, 0))
+    left_bottom_border.setWidth(5)
+    left_top_border.draw(maze)
+    left_bottom_border.draw(maze)
 
     # Top Wall Border
-    top_left_thick_point = Point(0, 1)
-    top_right_thick_point = Point(999, 1)
-    top_top_line = Line(top_left_thick_point, top_right_thick_point)
-    top_top_line.setOutline(color_rgb(255, 0, 0))
-    top_right_point = Point(999, 2)
-    top_line = Line(top_left_point, top_right_point)
-    top_line.setOutline(color_rgb(255, 0, 0))
-    top_top_line.draw(maze)
-    top_line.draw(maze)
+    top_wall_border = line(0, 0, 1000, 0)
+    top_wall_border.setOutline(color_rgb(255, 0, 0))
+    top_wall_border.setWidth(7)
+    top_wall_border.draw(maze)
 
     # Right Wall Border
-    right_top_midpoint = Point(999, 287)
-    right_bottom_midpoint = Point(999, 308)
-    bottom_right_point = Point(999, 599)
-    top_right_line = Line(top_right_point, right_top_midpoint)
-    bottom_right_line = Line(right_bottom_midpoint, bottom_right_point)
-    top_right_line.setOutline(color_rgb(255, 0, 0))
-    bottom_right_line.setOutline(color_rgb(255, 0, 0))
-    top_right_line.draw(maze)
-    bottom_right_line.draw(maze)
+    # Roughly halfway in the right wall is the maze exit where the sprites are trying to navigate
+    right_top_border = line(1000, 0, 1000, 287)                             # Top of sprite's exit hole starts at y coordinate 287
+    right_bottom_border = line(1000, 308, 1000, 600)                        # Bottom of sprite's exit hole starts at y coordinate 308
+    right_top_border.setOutline(color_rgb(255, 0, 0))
+    right_top_border.setWidth(7)
+    right_bottom_border.setOutline(color_rgb(255, 0, 0))
+    right_bottom_border.setWidth(7)
+    right_top_border.draw(maze)
+    right_bottom_border.draw(maze)
 
     # Bottom Wall Border
-    bottom_line = Line(bottom_left_point, bottom_right_point)
-    bottom_line.setOutline(color_rgb(255, 0, 0))
-    bottom_line.draw(maze)
+    bottom_border = line(0, 600, 1000, 600)
+    bottom_border.setOutline(color_rgb(255, 0, 0))
+    bottom_border.setWidth(7)
+    bottom_border.draw(maze)
 
     # First obstacle
-    begin_point1 = Point(50, 275)              
-    end_point1 = Point(50, 325)                
-    line1 = Line(begin_point1, end_point1)      
-    line1.setOutline(color_rgb(255, 0, 0))          
-    line1.draw(maze)                            
+    obstacle1 = line(50, 275, 50, 325)                  
+    obstacle1.setOutline(color_rgb(255, 0, 0))
+    obstacle1.setWidth(20)          
+    obstacle1.draw(maze)                            
 
     # 2nd and 3rd Obstacles - diagonal lines
-
-    begin_point2 = Point(100, 100)
-    end_point2 = Point(200, 200)
-    begin_point3 = Point(125, 475)
-    end_point3 = Point(175, 350)
-    Obstacle2 = Line(begin_point2, end_point2)
-    Obstacle3 = Line(begin_point3, end_point3)
-    Obstacle2.setOutline(color_rgb(255, 0, 0))
-    Obstacle3.setOutline(color_rgb(255, 0, 0))
-    Obstacle2.draw(maze)
-    Obstacle3.draw(maze)
+# Bottom of sprite's exit hole starts at y coordinate 308
+    obstacle2 = line(100, 100, 200, 200)
+    obstacle3 = line(125, 475, 175, 350)
+    obstacle2.setOutline(color_rgb(255, 0, 0))
+    obstacle2.setWidth(20)
+    obstacle3.setOutline(color_rgb(255, 0, 0))
+    obstacle3.setWidth(20)
+    obstacle2.draw(maze)
+    obstacle3.draw(maze)
 
     # 4th Obstacle
-    center_point4 = Point(400, 300)
-    top_point4 = Point(480, 220)
-    bottom_point4 = Point(480, 380)
-    top_diagonal4 = Line(center_point4, top_point4)
-    bottom_diagonal4 = Line(center_point4, bottom_point4)
-    top_diagonal4.setOutline(color_rgb(255, 0, 0))
-    top_diagonal4.draw(maze)
-    bottom_diagonal4.setOutline(color_rgb(255, 0, 0))
-    bottom_diagonal4.draw(maze)
+    obstacle4_top_diagonal = line(400, 300, 480, 220)
+    obstacle4_bottom_diagonal = line(400, 300, 480, 380)
+    obstacle4_top_diagonal.setOutline(color_rgb(255, 0, 0))
+    obstacle4_top_diagonal.setWidth(20)
+    obstacle4_bottom_diagonal.setOutline(color_rgb(255, 0, 0))
+    obstacle4_bottom_diagonal.setWidth(20)
+    obstacle4_top_diagonal.draw(maze)
+    obstacle4_bottom_diagonal.draw(maze)
     
     # 5th and 6th obstacles
-    bottom_start_point5 = Point(580, 480)
-    bottom_center_point5 = Point(680, 480)
-    bottom_end_point5 = Point(680, 380)
-    horizontal_line5 = Line(bottom_start_point5, bottom_center_point5)
-    verticle_line5 = Line(bottom_center_point5, bottom_end_point5)
-    horizontal_line5.setOutline(color_rgb(255, 0, 0))
-    verticle_line5.setOutline(color_rgb(255, 0, 0))
-    horizontal_line5.draw(maze)
-    verticle_line5.draw(maze)
+    obstacle5_horizontal = line(580, 480, 680, 480)
+    obstacle5_vertical = line(680, 480, 680, 380)
+    obstacle5_horizontal.setOutline(color_rgb(255, 0, 0))
+    obstacle5_horizontal.setWidth(20)
+    obstacle5_vertical.setOutline(color_rgb(255, 0, 0))
+    obstacle5_vertical.setWidth(20)
+    obstacle5_horizontal.draw(maze)
+    obstacle5_vertical.draw(maze)
 
-    top_start_point6 = Point(580, 120)
-    top_center_point6 = Point(680, 120)
-    top_end_point6 = Point(680, 220)
-    horizontal_line6 = Line(top_start_point6, top_center_point6)
-    verticle_line6 = Line(top_center_point6, top_end_point6)
-    horizontal_line6.setOutline(color_rgb(255, 0, 0))
-    verticle_line6.setOutline(color_rgb(255, 0, 0))
-    horizontal_line6.draw(maze)
-    verticle_line6.draw(maze)
+    obstacle6_horizontal = line(580, 120, 680, 120)
+    obstacle6_vertical = line(680, 120, 680, 220)
+    obstacle6_horizontal.setOutline(color_rgb(255, 0, 0))
+    obstacle6_horizontal.setWidth(20)
+    obstacle6_vertical.setOutline(color_rgb(255, 0, 0))
+    obstacle6_vertical.setWidth(20)
+    obstacle6_horizontal.draw(maze)
+    obstacle6_vertical.draw(maze)
 
     # 7th obstacle
-    top_point7 = Point(800, 250)
-    bottom_point7 = Point(800, 350)
-    obstacle7 = Line(top_point7, bottom_point7)
+    obstacle7 = line(800, 250, 800, 350)
     obstacle7.setOutline(color_rgb(255, 0, 0))
+    obstacle7.setWidth(20)
     obstacle7.draw(maze)
 
     maze.getMouse()                              #Allows the window to stay put until you click on it with the mouse
