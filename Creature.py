@@ -83,10 +83,14 @@ class Creature:
         action = self.DNA[actionIterator]
         print("I am about to move: " + action)
         nextPosition = self.calculateNextPos(action)
-        # check if desired next position is open space or a wall
-        if Maze[nextPosition[0]][nextPosition[1]] == 0:
+        # If the next position is not blocked, move there
+        if Maze[nextPosition[1]][nextPosition[0]] == 0:
+            # change previously held position back to a zero
+            Maze[Ricky.currentPosition[1]][Ricky.currentPosition[0]] = 0
             self.currentPosition = nextPosition
             print("After moving I am at position " + str(self.currentPosition))
+            # print on the maze where the creature is with an X
+            Maze[Ricky.currentPosition[1]][Ricky.currentPosition[0]] = 'X'
         else:
             print("Agent ran into wall")
 
@@ -105,13 +109,27 @@ class Creature:
 Ricky = Creature()
 Ricky.printDNA()
 
+
+# note about 2D arrays
+# elements can be accessed according to the following:
+# The first index is the row or Y coordinate and the second index is the column or X coordinate
+# Ex: Maze1[y][x]
 Maze1 = [[1, 1, 1, 1],
         [1, 0, 0, 1],
         [1, 0, 0, 1],
         [1, 0, 0, 1],
         [1, 1, 1, 1]]
 
-for x in range(10):
+
+# Test loop to see how collision works
+for x in range(5):
     Ricky.move(x,Maze1)
+    print(Maze1[0])
+    print(Maze1[1])
+    print(Maze1[2])
+    print(Maze1[3])
+    print(Maze1[4])
+
+    
 
 
