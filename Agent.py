@@ -18,7 +18,7 @@ class Agent:
     current_position = [1,1] # Start each agent at the starting point of the maze
     DNA_length = 50 # Allow for dynamic DNA length to be easily changed
     DNA = [None] * DNA_length # This will hold the list of actions that the agent will take
-    fitness_score = 0 # Stores the agents fitness score computed after final movement has been made
+    fitness_score = 0 # Stores the agents fitness score computed after final movement has been made, LOWER score is better!
 
     #########################################
     #### Class Functions 
@@ -103,14 +103,15 @@ class Agent:
             print("After moving I am at position " + str(self.current_position))
             # print on the maze where the agent is with an X
             maze[self.current_position[1]][self.current_position[0]] = 'X'
+        # If the next position is occupied by an obstacle
         else:
-            print("Agent ran into wall")
-        #if (action_iterator == self.DNA_length):
-        #   calculateFitness()
-        #    
+            print("Agent movement is blocked by a wall")
 
-       
-    
+        # Once the agent has completed its last action, calculate fitness
+        if (action_iterator == (self.DNA_length - 1)):
+            self.calculate_fitness(maze)
+            
+
     # Test function to display DNA
     def print_DNA(self):
         print(self.DNA)
@@ -129,15 +130,12 @@ class Agent:
 
     # TODO Fitness function
     def calculate_fitness(self, maze):
-        pass
-        # calculate distance from final position to maze exit
+        # calculate distance from final agent position to maze exit
         # d = sqrt((mazeX - agentX)^2 + (mazeY-agentY)^2)
-        # save operation complexity by not square rooting, maybe not squaring differences?
-        # should fitness_score become a class variable, autocomputed after final movement?
-        # agent's could then be added to a priority queue/max heap based on fitness_score to sort top 10%
-
-
-
+        # save operation complexity by not square rooting
+        # Coordinates of maze exit should replace (2,3) set for testing
+        score = (3 - self.current_position[1])**2 + (2 - self.current_position[0])**2
+        self.fitness_score = score
     
 
 
@@ -149,7 +147,7 @@ Ricky.print_DNA()
 # note about 2D arrays
 # elements can be accessed according to the following:
 # The first index is the row or Y coordinate and the second index is the column or X coordinate
-# Ex: maze1[y][x]
+# Ex: maze1[y][x] or maze1[row][column]
 maze1 = [[1, 1, 1, 1],
         [1, 0, 0, 1],
         [1, 0, 0, 1],
@@ -158,13 +156,15 @@ maze1 = [[1, 1, 1, 1],
 
 
 # Test loop to see how collision works
-for x in range(5):
+for x in range(50):
     Ricky.move(x,maze1)
     print(maze1[0])
     print(maze1[1])
     print(maze1[2])
     print(maze1[3])
     print(maze1[4])
+
+print("Ricky's fitness score was: " + str(Ricky.fitness_score))
 
     
 
