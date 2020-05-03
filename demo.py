@@ -10,10 +10,12 @@ def line(x1, y1, x2, y2):
     return Line(Point (x1, y1), Point(x2, y2))
 
 # ---------------------The main body of the program------------------------------------
+
 def main () :
     maze = GraphWin("My Window", 700, 400)       # Create the initial window that will pop up on the screen
     maze.setBackground(color_rgb(0, 0, 0))       # Sets the background of the window to black
 
+    # Variable to hold the width of the maze obstacles
     obstacle_width = 10
     
     # The following is the part of the program where we use line objects to draw the maze lines
@@ -61,7 +63,7 @@ def main () :
 
     # 2nd and 3rd Obstacles - diagonal lines
     obstacle2 = line(100, 50, 200, 150)
-    obstacle3 = line(125, 355, 175, 230)
+    obstacle3 = line(100, 350, 200, 250)
     obstacle2.setOutline(color_rgb(255, 0, 0))
     obstacle2.setWidth(obstacle_width)
     obstacle3.setOutline(color_rgb(255, 0, 0))
