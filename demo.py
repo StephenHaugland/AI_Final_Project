@@ -12,11 +12,12 @@ def line(x1, y1, x2, y2):
 # ---------------------The main body of the program------------------------------------
 
 def main () :
-    maze = GraphWin("My Window", 700, 400)       # Create the initial window that will pop up on the screen
-    maze.setBackground(color_rgb(0, 0, 0))       # Sets the background of the window to black
-
-    # Variable to hold the width of the maze obstacles
-    obstacle_width = 10
+    # Variables
+    obstacle_width = 10         # Holds the width of the maze obstacles
+    
+    # Let's initialize the pop up maze window
+    maze = GraphWin("Genetic Algorithm bot maze", 700, 400)       # Create the initial window that will pop up on the screen
+    maze.setBackground(color_rgb(0, 0, 0))                          # Sets the background of the window to black
     
     # The following is the part of the program where we use line objects to draw the maze lines
     # I've separated the border walls and obstacles code segments
