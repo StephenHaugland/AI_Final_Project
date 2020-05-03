@@ -2,7 +2,8 @@
 # Artificial Intelligence Spring 2020
 # This file contains the agent class 
 
-import random # used for randomly seeding DNA
+import random # Used for randomly seeding DNA
+import copy # Used to create deep copy of variables
 
 
 # agent class
@@ -48,7 +49,7 @@ class Agent:
     def calculate_next_pos(self, action):
         # calculate the next position
         # TODO: Find out how to copy variable contents, this is where bug occurs
-        next_pos = self.current_position
+        next_pos = copy.deepcopy(self.current_position)
         # If facing up/north
         if self.current_orientation == 90 or self.current_orientation == -270:
             if action == 'F':
@@ -98,7 +99,7 @@ class Agent:
             # change previously held position back to a zero
             maze[self.current_position[1]][self.current_position[0]] = 0
             # TODO: Find out how to copy variable contents, this is where bug occurs
-            self.current_position = next_position
+            self.current_position = copy.deepcopy(next_position)
             print("After moving I am at position " + str(self.current_position))
             # print on the maze where the agent is with an X
             maze[self.current_position[1]][self.current_position[0]] = 'X'
