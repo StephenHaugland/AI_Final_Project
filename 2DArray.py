@@ -70,7 +70,10 @@ while not done:
         column = pos[0] // (WIDTH + MARGIN)
         row = pos[1] // (HEIGHT + MARGIN)
         # Set that location to one
-        grid[row][column] = 1
+        if grid[row][column] == 0:
+            grid[row][column] = 1
+        elif grid[row][column] == 1:
+            grid[row][column] = 0
         print("Click ", pos, "Grid coordinates: ", row, column)
  
     # Set the screen background
