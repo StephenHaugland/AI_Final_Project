@@ -77,7 +77,7 @@ while not done:
         column = pos[0] // (WIDTH + MARGIN)
         row = pos[1] // (HEIGHT + MARGIN)
         # Set that location to one(wall) if cell is within grid boundaries
-        if row < 40 and row > 0 and column > 0 and column < 70:
+        if row < 40 and row >= 0 and column >= 0 and column < 70:
             if grid[row][column] == 0:
                 grid[row][column] = 1
             print("Draw at ", pos, "Grid coordinates: ", row, column)
@@ -89,7 +89,7 @@ while not done:
         column = pos[0] // (WIDTH + MARGIN)
         row = pos[1] // (HEIGHT + MARGIN)
         # Set that location to zero(open) if cell is within grid boundaries
-        if row < 40 and row > 0 and column > 0 and column < 70:
+        if row < 40 and row >= 0 and column >= 0 and column < 70:
             if grid[row][column] == 1:
                 grid[row][column] = 0
             print("Erase at ", pos, "Grid coordinates: ", row, column)
