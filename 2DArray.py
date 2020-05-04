@@ -55,19 +55,19 @@ clock = pygame.time.Clock()
  
 # -------- Main Program Loop -----------
 while not done:
+    # intialize draw and erase to false
     draw = False
     erase = False
-    pos = pygame.mouse.get_pos()
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
             done = True  # Flag that we are done so we exit this loop
-        elif pygame.mouse.get_pressed()[0]:
+        elif pygame.mouse.get_pressed()[0]: # If user left clicks, draw wall
             draw = True
-        elif not pygame.mouse.get_pressed()[0]:
+        elif not pygame.mouse.get_pressed()[0]: # If user is not holding left click don't draw
             draw = False
-        if pygame.mouse.get_pressed()[2]:
+        if pygame.mouse.get_pressed()[2]: # If user right clicks, erase wall
             erase = True
-        elif not pygame.mouse.get_pressed()[2]:
+        elif not pygame.mouse.get_pressed()[2]: # If user is not holding right click don't erase
             erase = False
         
     if draw == True:
@@ -76,18 +76,19 @@ while not done:
         # Change the x/y screen coordinates to grid coordinates
         column = pos[0] // (WIDTH + MARGIN)
         row = pos[1] // (HEIGHT + MARGIN)
-        # Set that location to one
+        # Set that location to one(wall) if cell is within grid boundaries
         if row < 40 and row > 0 and column > 0 and column < 70:
             if grid[row][column] == 0:
                 grid[row][column] = 1
             print("Click ", pos, "Grid coordinates: ", row, column)
+
     if erase == True:
         # User clicks the mouse. Get the position
         pos = pygame.mouse.get_pos()
         # Change the x/y screen coordinates to grid coordinates
         column = pos[0] // (WIDTH + MARGIN)
         row = pos[1] // (HEIGHT + MARGIN)
-        # Set that location to zero
+        # Set that location to zero(open) if cell is within grid boundaries
         if row < 40 and row > 0 and column > 0 and column < 70:
             if grid[row][column] == 1:
                 grid[row][column] = 0
