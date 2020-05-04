@@ -80,7 +80,7 @@ while not done:
         if row < 40 and row > 0 and column > 0 and column < 70:
             if grid[row][column] == 0:
                 grid[row][column] = 1
-            print("Click ", pos, "Grid coordinates: ", row, column)
+            print("Draw at ", pos, "Grid coordinates: ", row, column)
 
     if erase == True:
         # User clicks the mouse. Get the position
@@ -92,7 +92,7 @@ while not done:
         if row < 40 and row > 0 and column > 0 and column < 70:
             if grid[row][column] == 1:
                 grid[row][column] = 0
-            print("Click ", pos, "Grid coordinates: ", row, column)
+            print("Erase at ", pos, "Grid coordinates: ", row, column)
  
     # Set the screen background
     screen.fill(BLACK)
