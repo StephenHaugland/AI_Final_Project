@@ -97,6 +97,7 @@ class Agent:
         # If the next position is not blocked, move there
         if maze[next_position[1]][next_position[0]] == 0:
             # change previously held position back to a zero
+            # Stephen remind me to ask you about this next line of code
             maze[self.current_position[1]][self.current_position[0]] = 0
             # TODO: Find out how to copy variable contents, this is where bug occurs
             self.current_position = copy.deepcopy(next_position)
