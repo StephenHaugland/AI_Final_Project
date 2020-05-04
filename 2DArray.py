@@ -56,6 +56,8 @@ clock = pygame.time.Clock()
 # -------- Main Program Loop -----------
 while not done:
     draw = False
+    erase = False
+    pos = pygame.mouse.get_pos()
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
             done = True  # Flag that we are done so we exit this loop
@@ -63,6 +65,11 @@ while not done:
             draw = True
         elif not pygame.mouse.get_pressed()[0]:
             draw = False
+        if pygame.mouse.get_pressed()[2]:
+            erase = True
+        elif not pygame.mouse.get_pressed()[2]:
+            erase = False
+        
     if draw == True:
         # User clicks the mouse. Get the position
         pos = pygame.mouse.get_pos()
@@ -70,11 +77,21 @@ while not done:
         column = pos[0] // (WIDTH + MARGIN)
         row = pos[1] // (HEIGHT + MARGIN)
         # Set that location to one
-        if grid[row][column] == 0:
-            grid[row][column] = 1
-        elif grid[row][column] == 1:
-            grid[row][column] = 0
-        print("Click ", pos, "Grid coordinates: ", row, column)
+        if row < 40 and row > 0 and column > 0 and column < 70:
+            if grid[row][column] == 0:
+                grid[row][column] = 1
+            print("Click ", pos, "Grid coordinates: ", row, column)
+    if erase == True:
+        # User clicks the mouse. Get the position
+        pos = pygame.mouse.get_pos()
+        # Change the x/y screen coordinates to grid coordinates
+        column = pos[0] // (WIDTH + MARGIN)
+        row = pos[1] // (HEIGHT + MARGIN)
+        # Set that location to zero
+        if row < 40 and row > 0 and column > 0 and column < 70:
+            if grid[row][column] == 1:
+                grid[row][column] = 0
+            print("Click ", pos, "Grid coordinates: ", row, column)
  
     # Set the screen background
     screen.fill(BLACK)
