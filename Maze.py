@@ -6,8 +6,8 @@ import pygame
 
 class Maze:
     # Special grid locations
-    MAZE_EXIT = (0,0)
-    MAZE_START = (5,5)
+    MAZE_EXIT = [70,20]
+    MAZE_START = [1,20]
 
     # This sets the WIDTH and HEIGHT of each grid square
     CELL_SIZE = 10

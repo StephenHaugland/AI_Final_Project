@@ -15,7 +15,8 @@ class Agent:
     #########################################
 
     current_orientation = 0 # Specifies which direction the agent is facing, utilizes unit circle degrees
-    current_position = [1,1] # Start each agent at the starting point of the maze
+    previous_position = [1,20] # store the agent's previous position to repaint black on the screen
+    current_position = [1,20] # Start each agent at the starting point of the maze
     DNA_length = 50 # Allow for dynamic DNA length to be easily changed
     DNA = [None] * DNA_length # This will hold the list of actions that the agent will take
     fitness_score = 0 # Stores the agents fitness score computed after final movement has been made, LOWER score is better!
@@ -25,10 +26,12 @@ class Agent:
     #########################################
 
     # initial randomized constructor, to be used to create first generation
-    def __init__(self):
+    def __init__(self, maze):
         # generate 50 random actions/movements to seed the first generation
         for x in range(self.DNA_length):
             self.DNA[x] = random.choice(['L', 'F', 'R'])
+        # spawn the agent at the start of the maze
+        self.current_position = copy.deepcopy(maze.MAZE_START)
 
 
     # update the agents orientation according to which direction it turns
@@ -94,27 +97,40 @@ class Agent:
     # maze: 2D array agent is navigation through
     # action_iterator: integer expressing index of current genome/action being expressed from DNA
     def move(self, action_iterator, maze):
+        changed_position = False
+
         # determine next position
         action = self.DNA[action_iterator]
         print("I am about to move: " + action)
         next_position = self.calculate_next_pos(action)
+
         # If the next position is not blocked, move there
         if maze[next_position[1]][next_position[0]] == 0:
+            # Set the flag that the agent has moved
+            changed_position = True
             # change previously held position back to a zero
             # Stephen remind me to ask you about this next line of code
-            maze[self.current_position[1]][self.current_position[0]] = 0
-            # TODO: Find out how to copy variable contents, this is where bug occurs
+            ## maze[self.current_position[1]][self.current_position[0]] = 0
+
+            # since movement has occured, change previous position to current and update current to next
+            self.previous_position = copy.deepcopy(self.current_position)
             self.current_position = copy.deepcopy(next_position)
+
             print("After moving I am at position " + str(self.current_position))
             # print on the maze where the agent is with an X
-            maze[self.current_position[1]][self.current_position[0]] = 'X'
+            ## maze[self.current_position[1]][self.current_position[0]] = 'X'
         # If the next position is occupied by an obstacle
         else:
             print("Agent movement is blocked by a wall")
 
         # Once the agent has completed its last action, calculate fitness
+        # TODO move this to controller 
         if (action_iterator == (self.DNA_length - 1)):
             self.calculate_fitness(maze)
+
+        return changed_position
+
+
             
 
     # Test function to display DNA

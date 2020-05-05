@@ -1,4 +1,4 @@
-# # Stephen Haugland and Shane Snediker
+# Stephen Haugland and Shane Snediker
 # Artificial Intelligence Spring 2020
 # This file links our agent with our graphical grid
 # Controller also contains the main program loop
@@ -13,6 +13,7 @@ pygame.init()
  
 # create a maze object
 Maze = Maze.Maze()
+
 
 # create a screen to draw the maze on
 screen = pygame.display.set_mode(Maze.MAZE_SIZE)
@@ -29,7 +30,7 @@ clock = pygame.time.Clock()
 # Define our maze colors
 BLACK = (0, 0, 0)    # Background color
 RED = (255, 0, 0)    # Maze obstacle colors
-WHITE = (0, 0, 0)    # Agent test color
+WHITE = (255, 255, 255)    # Agent test color
  
 # Set the screen background
 screen.fill(BLACK)
@@ -76,31 +77,56 @@ for row in range(41):
 
 
 
-
 # Create an agent to navigate the maze
-Ricky = Agent.Agent()
+Ricky = Agent.Agent(Maze)
 Ricky.print_DNA()
 
 # -------- Main Program Loop -----------
 
 # The flag that allows the maze to loop until the user clicks the close button
 done = False
+actionNumber = 0 #This is the DNA index for the agent to execute each loop
 
 while not done:
     # TODO I think this might be where we will add code to allow the user to choose 
     # the amount of agents in the simulation
-
     for event in pygame.event.get():  
         # First, if the user clicks the close button, we need to close the window down
         if event.type == pygame.QUIT:
             # by changing the loop flag to True
             done = True
-            
+
+
+    ################
+    # Agent movement
+    ################
+
+    # Bool variable that gets SET if agent could move and changed positions
+    Moved = False 
+
+    # check if agent still has moves to execute
+    if (actionNumber < Ricky.DNA_length):
+        # For every frame, move the agent once
+        Moved = Ricky.move(actionNumber, Maze.MAZE_GRID)
+        # iterate which action will be performed
+        actionNumber += 1
+        # if the agent changed positions update the screen accordingly
+        if Moved == True:
+            # change the previous position to black
+            color = BLACK
+            # Peek line 66 for draw.rect() argument explanation
+            pygame.draw.rect(screen, color, [Maze.CELL_SIZE * Ricky.previous_position[0], Maze.CELL_SIZE * Ricky.previous_position[1], Maze.CELL_SIZE, Maze.CELL_SIZE])
+            # update the new position to white
+            color = WHITE
+            pygame.draw.rect(screen, color, [Maze.CELL_SIZE * Ricky.current_position[0], Maze.CELL_SIZE * Ricky.current_position[1], Maze.CELL_SIZE, Maze.CELL_SIZE])
+
+    
+    pygame.time.wait(250)
+
     # Limit to 60 frames per second
     clock.tick(60)
- 
     # Go ahead and update the screen with what we've drawn.
-    pygame.display.flip()
+    pygame.display.update()
 
 # Be IDLE friendly. If you forget this line, the program will 'hang' on exit.
 pygame.quit()
