@@ -121,7 +121,8 @@ while not done:
             pygame.draw.rect(screen, color, [Maze.CELL_SIZE * Ricky.current_position[0], Maze.CELL_SIZE * Ricky.current_position[1], Maze.CELL_SIZE, Maze.CELL_SIZE])
 
     
-    pygame.time.wait(250)
+    # Add a delay so agent movement can be observed
+    pygame.time.wait(50)
 
     # Limit to 60 frames per second
     clock.tick(60)

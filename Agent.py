@@ -15,9 +15,9 @@ class Agent:
     #########################################
 
     current_orientation = 0 # Specifies which direction the agent is facing, utilizes unit circle degrees
-    previous_position = [1,20] # store the agent's previous position to repaint black on the screen
+    previous_position = [1,20] # Store the agent's previous position to repaint black on the screen
     current_position = [1,20] # Start each agent at the starting point of the maze
-    DNA_length = 50 # Allow for dynamic DNA length to be easily changed
+    DNA_length = 500 # Allow for dynamic DNA length to be easily changed
     DNA = [None] * DNA_length # This will hold the list of actions that the agent will take
     fitness_score = 0 # Stores the agents fitness score computed after final movement has been made, LOWER score is better!
 
@@ -32,6 +32,7 @@ class Agent:
             self.DNA[x] = random.choice(['L', 'F', 'R'])
         # spawn the agent at the start of the maze
         self.current_position = copy.deepcopy(maze.MAZE_START)
+        self.previous_position = copy.deepcopy(maze.MAZE_START)
 
 
     # update the agents orientation according to which direction it turns

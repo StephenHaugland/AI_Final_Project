@@ -7,11 +7,10 @@ import pygame
 class Maze:
     # Special grid locations
     MAZE_EXIT = [70,20]
-    MAZE_START = [1,20]
+    MAZE_START = [0,20]
 
     # This sets the WIDTH and HEIGHT of each grid square
     CELL_SIZE = 10
-
 
     # Set the HEIGHT and WIDTH of the pop up screen
     MAZE_SIZE = [700, 410]
