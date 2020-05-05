@@ -5,12 +5,32 @@
 
 import pygame
  
-# Define our colors
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
+# Define our maze colors
+BLACK = (0, 0, 0)    # Background color
+RED = (255, 0, 0)    # Maze obstacle colors
  
-# This sets the WIDTH and HEIGHT of each grid location
+# This sets the WIDTH and HEIGHT of each grid square
 CELL_SIZE = 10
+
+#----------------------------------------------------------------------------------
+# A lot of 2DArray.py was built off of the array_backed_grid tutorial found at
+# http://programarcadegames.com/index.php?lang=en&chapter=array_backed_grids
+# That tutorial used an interactive grid window based on the game Minesweeper to
+# demonstrate python 2 dimensional array conepts using pygame  
+# The following lines of code might possibly be deleted if we decide to abandon
+# the idea of allowing the user to interact with the demo:
+# lines 15-34, 92-142
+# These lines include code that involves using a mouse to interact with the grid/maze
+#----------------------------------------------------------------------------------
+# Create a 2 dimensional array. A two dimensional
+# array is simply a list of lists.
+grid = []
+for row in range(10):
+    # Add an empty array that will hold each cell
+    # in this row
+    grid.append([])
+    for column in range(10):
+        grid[row].append(0)  # Append a cell
  
 # Initialize the pygame library that facilitates the graphical maze
 pygame.init()
@@ -65,6 +85,7 @@ done = False
 clock = pygame.time.Clock()
  
 # -------- Main Program Loop -----------
+
 while not done:
     # intialize draw and erase to false
     draw = False
@@ -133,7 +154,17 @@ while not done:
             # Now we iterate through our 2 dimensional array and print obstacle locations in red              
             if MAZE[row][column] == 1:
                 color = RED
-            # TODO I believe here is where code can be added to draw lines on the diagonal obstacles so that they don't show as jagged
+            # Here we need to insert a snippet of code that prevents our diagonal 
+            # obstacles from showing as jagged lines.  Because our maze is built off 
+            # the structure of a grid, diagonal obstacles show as rough jagged lines
+            # Here we manually insert pygame lines to make the maze look better
+            # The first line is the 2nd obstacle in the maze - a diagonal line from the top left corner of the maze down and to the right
+            pygame.draw.line(screen, color, (90, 40), (200, 150), 20)
+            # The second line is the 3rd obstacle in the maze - a diagonal line from the lower left corner of the maze up and to the right
+            pygame.draw.line(screen, color, (90, 369), (200, 259), 20)
+            # The third and fourth lines here cover the double diagonal obstacle in the center of our maze
+            pygame.draw.line(screen, color, (296, 201), (379, 118), 27)
+            pygame.draw.line(screen, color, (295, 202), (383, 290), 25)
             # The pygame draw.rect function takes 3 primary arguments:
             # The first argument is the surface on which the rectangle will be drawn
             # The second is the desired color of the rectangle
@@ -142,12 +173,14 @@ while not done:
             # If no argument is given for the thickness parameter (like in our case), then the default is to fill the rectangle with the color argument
             pygame.draw.rect(screen,
                              color,
-                            # x coordinate is the product of the (cell width + margin) and the (current column + margin)
-                             [CELL_SIZE * column,   # Use to have MARGIN added to both CELL_SIZE and column
-                             # y coordinate is the product of the (cell height + margin) and the (current row + margin)    
-                               CELL_SIZE * row,      # Use to have MARGIN added to both CELL_SIZE and row
-                              CELL_SIZE,        # rectangle width
-                              CELL_SIZE])      # rectangle height
+                              # x coordinate is the product of the cell width and the current column 
+                             [CELL_SIZE * column,   
+                              # y coordinate is the product of the cell height and the current row     
+                                CELL_SIZE * row,     
+                              # rectangle width
+                              CELL_SIZE,             
+                              # rectangle height
+                              CELL_SIZE])            
  
     # Limit to 60 frames per second
     clock.tick(60)
@@ -155,9 +188,5 @@ while not done:
     # Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
  
-# Be IDLE friendly. If you forget this line, the program will 'hang'
-# on exit.
+# Be IDLE friendly. If you forget this line, the program will 'hang' on exit.
 pygame.quit()
-
-# TODO This print helps us in setting up the 2 dimensional array.  Erase before final product.
-#print(MAZE)
