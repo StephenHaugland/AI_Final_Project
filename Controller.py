@@ -122,7 +122,7 @@ while not done:
 
     
     # Add a delay so agent movement can be observed
-    pygame.time.wait(50)
+    pygame.time.wait(60)
 
     # Limit to 60 frames per second
     clock.tick(60)
