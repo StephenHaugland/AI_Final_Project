@@ -11,7 +11,7 @@ import copy # Used to create deep copy of variables
 class Agent:
 
     #########################################
-    #### Class Variables 
+    #### Class Attributes 
     #########################################
 
     current_orientation = 0 # Specifies which direction the agent is facing, utilizes unit circle degrees
@@ -21,7 +21,7 @@ class Agent:
     fitness_score = 0 # Stores the agents fitness score computed after final movement has been made, LOWER score is better!
 
     #########################################
-    #### Class Functions 
+    #### Class Methods 
     #########################################
 
     # initial randomized constructor, to be used to create first generation
@@ -32,6 +32,7 @@ class Agent:
 
 
     # update the agents orientation according to which direction it turns
+    # dir: direction agent moves
     def turn(self,dir):
         # Degrees updated based on unit circle orientation
         if dir == 'L':
@@ -45,7 +46,8 @@ class Agent:
             self.current_orientation = 0
         print("I am now facing " + str(self.current_orientation)) 
 
-    # Calculates the next position if movement were to be carried out based on current orientation
+    # Calculates the next position if movement were to be carried out
+    # action: an action derived from DNA i.e. L, F, or R
     def calculate_next_pos(self, action):
         # calculate the next position
         # TODO: Find out how to copy variable contents, this is where bug occurs
@@ -89,6 +91,8 @@ class Agent:
         return next_pos
 
     # function that moves the agent to its next position if a wall is not present
+    # maze: 2D array agent is navigation through
+    # action_iterator: integer expressing index of current genome/action being expressed from DNA
     def move(self, action_iterator, maze):
         # determine next position
         action = self.DNA[action_iterator]
@@ -129,7 +133,8 @@ class Agent:
         pass
 
 
-    # TODO Fitness function
+
+    # maze: 2D array agent is navigating through
     def calculate_fitness(self, maze):
         # calculate distance from final agent position to maze exit
         # d = sqrt((mazeX - agentX)^2 + (mazeY-agentY)^2)

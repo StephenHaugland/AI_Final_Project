@@ -16,7 +16,7 @@ CELL_SIZE = 10
 # A lot of 2DArray.py was built off of the array_backed_grid tutorial found at
 # http://programarcadegames.com/index.php?lang=en&chapter=array_backed_grids
 # That tutorial used an interactive grid window based on the game Minesweeper to
-# demonstrate python 2 dimensional array conepts using pygame  
+# demonstrate python 2 dimensional array concepts using pygame  
 # The following lines of code might possibly be deleted if we decide to abandon
 # the idea of allowing the user to interact with the demo:
 # lines 15-34, 92-142
