@@ -146,31 +146,32 @@ class Agent:
 
 
 # Testing movement and object collision detection
-Ricky = Agent()
-Ricky.print_DNA()
+# Ricky = Agent()
+# Ricky.print_DNA()
 
 
 # note about 2D arrays
 # elements can be accessed according to the following:
 # The first index is the row or Y coordinate and the second index is the column or X coordinate
 # Ex: maze1[y][x] or maze1[row][column]
-maze1 = [[1, 1, 1, 1],
-        [1, 0, 0, 1],
-        [1, 0, 0, 1],
-        [1, 0, 0, 1],
-        [1, 1, 1, 1]]
+
+# maze1 = [[1, 1, 1, 1],
+#         [1, 0, 0, 1],
+#         [1, 0, 0, 1],
+#         [1, 0, 0, 1],
+#         [1, 1, 1, 1]]
 
 
 # Test loop to see how collision works
-for x in range(50):
-    Ricky.move(x,maze1)
-    print(maze1[0])
-    print(maze1[1])
-    print(maze1[2])
-    print(maze1[3])
-    print(maze1[4])
+# for x in range(50):
+#     Ricky.move(x,maze1)
+#     print(maze1[0])
+#     print(maze1[1])
+#     print(maze1[2])
+#     print(maze1[3])
+#     print(maze1[4])
 
-print("Ricky's fitness score was: " + str(Ricky.fitness_score))
+# print("Ricky's fitness score was: " + str(Ricky.fitness_score))
 
     
 
