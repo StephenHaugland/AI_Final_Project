@@ -14,22 +14,19 @@ pygame.init()
 # create a maze object
 Maze = Maze.Maze()
 
-
 # create a screen to draw the maze on
 screen = pygame.display.set_mode(Maze.MAZE_SIZE)
 
 # Set title of screen
 pygame.display.set_caption("Artificial Intelligence Final Project Spring 2020")
  
-
- 
 # Declaration of a clock variable that utilizes a clock function
 # from the pygame library that mediates the speed of the screen updates
 clock = pygame.time.Clock()
 
 # Define our maze colors
-BLACK = (0, 0, 0)    # Background color
-RED = (255, 0, 0)    # Maze obstacle colors
+BLACK = (0, 0, 0)          # Background color
+RED = (255, 0, 0)          # Maze obstacle colors
 WHITE = (255, 255, 255)    # Agent test color
  
 # Set the screen background
@@ -45,17 +42,6 @@ for row in range(41):
         # Now we iterate through our 2 dimensional array and print obstacle locations in red              
         if Maze.MAZE_GRID[row][column] == 1:
             color = RED
-        # Here we need to insert a snippet of code that prevents our diagonal 
-        # obstacles from showing as jagged lines.  Because our maze is built off 
-        # the structure of a grid, diagonal obstacles show as rough jagged lines
-        # Here we manually insert pygame lines to make the maze look better
-        # The first line is the 2nd obstacle in the maze - a diagonal line from the top left corner of the maze down and to the right
-        pygame.draw.line(screen, color, (90, 40), (200, 150), 20)
-        # The second line is the 3rd obstacle in the maze - a diagonal line from the lower left corner of the maze up and to the right
-        pygame.draw.line(screen, color, (90, 369), (200, 259), 20)
-        # The third and fourth lines here cover the double diagonal obstacle in the center of our maze
-        pygame.draw.line(screen, color, (296, 201), (379, 118), 27)
-        pygame.draw.line(screen, color, (295, 202), (383, 290), 25)
         # The pygame draw.rect function takes 3 primary arguments:
         # The first argument is the surface on which the rectangle will be drawn
         # The second is the desired color of the rectangle
@@ -72,9 +58,6 @@ for row in range(41):
                             Maze.CELL_SIZE,             
                             # rectangle height
                             Maze.CELL_SIZE])            
-
-
-
 
 
 # Create an agent to navigate the maze
