@@ -28,13 +28,28 @@ class Population:
         self.pop_size = size
         self.Agent_quiver = agents
 
+
+
+    # This method selects the parents for the next generation using Roulette Wheel Selection
+    # Implementation details referenced from: https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
+    # In this method there is selection pressure towards fitter individuals but there is a chance for any agent to become a parent
+    def selection(self):
+        sum = 0
+        for x in range(len(self.Agent_quiver)):
+            sum += self.Agent_quiver[x].fitness_score
+            
+        Rand = random.randint(0,sum)
+
+
+
+
     # This method takes in a generation of agents,
     # orders them from fittest to weakest and returns 
     # a randomized order of the surviving parents 
     def kill_the_weak(self):
         # First we have to kill off the weakest from the previous generation
         # Survival of the fittest is gruesome
-        # Begin by aligning the population of agents from the fittest to the weakest
+        # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have lower scores)
         Ordered_agents = sorted(self.Agent_quiver, key = self.Agent_quiver.fitness, reverse = True)
         # Now we kill half of the population
         # Let's initialize an array half the size of our population
