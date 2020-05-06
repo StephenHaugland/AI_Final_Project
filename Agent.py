@@ -110,7 +110,6 @@ class Agent:
             # Set the flag that the agent has moved
             changed_position = True
             # change previously held position back to a zero
-            # Stephen remind me to ask you about this next line of code
             ## maze[self.current_position[1]][self.current_position[0]] = 0
 
             # since movement has occured, change previous position to current and update current to next

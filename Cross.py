@@ -27,14 +27,11 @@ class Population:
     def __init__(self, agents, size):
         self.pop_size = size
         self.Agent_quiver = agents
-        
-    # Function to define DNA crossover reproduction
-    # Because the order of directional functionality will lead to
-    # increased fitness within individual agents, we adopt a version
-    # of reproduction called ordered crossover.  In ordered crossover,
-    # large segments of DNA get chunked together and passed on to successive generations
-    def  crossover(self, pop_size):
 
+    # This method takes in a generation of agents,
+    # orders them from fittest to weakest and returns 
+    # a randomized order of the surviving parents 
+    def kill_the_weak(self):
         # First we have to kill off the weakest from the previous generation
         # Survival of the fittest is gruesome
         # Begin by aligning the population of agents from the fittest to the weakest
@@ -46,14 +43,30 @@ class Population:
         # Now we iterate through the list of ordered agents saving the top half
         for agent in range((self.number_of_survivors)):
             Fittest.append(Ordered_agents[agent])
-    
+        # We want this reproductive process to be random between the surviving parents
+        # Therefore we need to randomize the order or the parent array
+        Fittest.shuffle()
+
+        return Fittest
+                
+    # Function to define DNA crossover reproduction
+    # Because the directional order of an agent's movements will lead to
+    # increased fitness within individual agents, we adopt a version
+    # of reproduction called ordered crossover.  In ordered crossover,
+    # large segments of DNA get chunked together and passed on to successive generations
+    # Throughout this method, we often refer to the first parent in a genetic 
+    # combination as p1, and the second parent as p2
+    def  crossover(self):
+        # We begin by killing the weakest half of the population
         
         # Initialize an array to hold our new crossover generation
         new_pop = []
 
-        # We want this reproductive process to random between the surviving parents
-        # Therefore we need to randomize the order or the survivor queue
-        Fittest.shuffle()
+        # Ultimately, in this version of crossover we want to take a DNA strand
+        # of random size from p1 plucked from a random location within p1's DNA sequence
+        # We then place that random strand at a random location within the child's DNA sequence
+        # At that point we begin filling in the other half of the child's DNA structure with 
+        # p2's DNA
 
         # Initialize a dynamic array that will hold the specific sequence of DNA
         # from p1 that will be passed to the child
@@ -61,14 +74,15 @@ class Population:
 
         # Now that we have a randomized order within the surviving parent list
         # we can start the reproductive process.  This will be a pretty detailed
-        # for loop that will iterate through the shuffled Fittest list combining
+        # for loop that will iterate through the shuffled parent list 
         # combining specific DNA segments and genes to create children
-        # Each iteration of this loop combines 2 agents from the Fittest queue and 
-        # creates a child
+        # Each iteration of the first nested loop combines 2 agents from 
+        # the parent array and creates a child
+        # i will be tied to p1 and j will be tied to p2
         for i, j in range(Fittest.len()):
-            # Create a random integer from 0 to the size of an agent's DNA strand
-            # We will pull a strand of DNA of this random size from parent 1 (p1)
-            p1_DNA_strand = random.randint(0, self.Agent_quiver.DNA_length)
+            # Create a random integer from 50 to the size of an agent's DNA strand
+            # We will pull a strand of DNA of this random size from p1
+            p1_DNA_strand = random.randint(50, self.Agent_quiver.DNA_length)
             # Create a random integer from 0 up to the size of DNA bits 
             # that are not getting pulled from p1 to represent the index 
             # where we will place the DNA strand from p1
