@@ -58,7 +58,7 @@ class Population:
     # combination as p1, and the second parent as p2
     def  crossover(self):
         # We begin by killing the weakest half of the population
-        
+        self.kill_the_weak()
         # Initialize an array to hold our new crossover generation
         new_pop = []
 

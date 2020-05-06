@@ -20,6 +20,7 @@ class Agent:
     DNA_length = 500 # Allow for dynamic DNA length to be easily changed
     DNA = [None] * DNA_length # This will hold the list of actions that the agent will take
     fitness_score = 0 # Stores the agents fitness score computed after final movement has been made, LOWER score is better!
+    DNA_mutate_strand = (DNA // 10) # A holder variable that captures an integer value representing 10 percept of an agent's DNA
 
     #########################################
     #### Class Methods 
@@ -130,7 +131,44 @@ class Agent:
 
         return changed_position
 
+    # Function that gives definition to an agent's DNA mutation
+    # We choose to use a scrambled version of DNA mutation where 
+    # we take a DNA strand that is a predetermined percentage of
+    # an agent's total DNA size and we scramble the contents of
+    # of that strand and then put the scrambled strand back in place
+    def mutate(self):
+        # We need to find a random starting index within this agent's DNA strand to begin the mutation
+        # We declare a variable that captures a random integer.  This random integer has to be 
+        # less than the difference between the length of the agent's DNA strand and the length
+        # of the mutating strand so that we can mutate from any random index within the DNA sequence
+        start_index = random.randint(0, (len(self.DNA) - self.DNA_mutate_strand))
+        
+        # Initialize an array that will hold the DNA sequence to be scrambled
+        mutation_sequence = []
 
+        # Now we begin filling our mutation array with the specific sequence
+        # of DNA from this agent that will be scrambled
+        # Iterate through this agent's DNA sequence for the length of the
+        # predetermined mutation DNA sequence
+        for i in range(self.DNA_mutate_strand):
+            # Load the mutation sequence array with the agent's DNA sequnence
+            # beginning at the random starting index
+            # But we have to take into account that arrays begin at index 0
+            # and also we have to prevent the strand for going out of bounds
+            # hence the [(start_index + i) - 1]
+            mutation_sequence.append(self.DNA[(start_index + i) - 1])
+
+        # Now that we've captured the strand to be scrambled, we scramble it
+        mutation_sequence.scramble()
+
+        # Now that the sequence has been scrambled, we can put it back
+        for i in range(self.DNA_mutate_strand):
+            # Find the place in the agent's DNA strand where the mutation sequence was pulled
+            # and start at that index replacing indices with the scrambled values
+            self.DNA[(start_index + i) - 1] = mutation_sequence[i - 1]
+
+            # return the mutated agent
+            return self
             
 
     # Test function to display DNA
