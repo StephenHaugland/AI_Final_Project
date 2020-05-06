@@ -28,13 +28,14 @@ class Population:
         self.pop_size = size
         self.Agent_quiver = agents
 
+
     # This method takes in a generation of agents,
     # orders them from fittest to weakest and returns 
     # a randomized order of the surviving parents 
     def kill_the_weak(self):
         # First we have to kill off the weakest from the previous generation
         # Survival of the fittest is gruesome
-        # Begin by aligning the population of agents from the fittest to the weakest
+        # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have lower scores)
         Ordered_agents = sorted(self.Agent_quiver, key = self.Agent_quiver.fitness, reverse = True)
         # Now we kill half of the population
         # Let's initialize an array half the size of our population

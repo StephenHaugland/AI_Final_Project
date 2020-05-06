@@ -19,7 +19,7 @@ class Agent:
     current_position = [1,20] # Start each agent at the starting point of the maze
     DNA_length = 500 # Allow for dynamic DNA length to be easily changed
     DNA = [None] * DNA_length # This will hold the list of actions that the agent will take
-    fitness_score = 0 # Stores the agents fitness score computed after final movement has been made, LOWER score is better!
+    fitness_score = 0 # Stores the agents fitness score computed after final movement has been made, higher score is better!
 
     #########################################
     #### Class Methods 
@@ -155,8 +155,9 @@ class Agent:
         # calculate distance from final agent position to maze exit
         # d = sqrt((mazeX - agentX)^2 + (mazeY-agentY)^2)
         # save operation complexity by not square rooting
-        # Coordinates of maze exit should replace (2,3) set for testing
-        score = (3 - self.current_position[1])**2 + (2 - self.current_position[0])**2
+        distance = (maze.MAZE_EXIT[1] - self.current_position[1])**2 + (maze.MAZE_EXIT[0] - self.current_position[0])**2
+        # arbitrary number chosen to subtract distance from to make fitter agents have higher scores
+        score = 150 - distance
         self.fitness_score = score
     
 
