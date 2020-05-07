@@ -20,29 +20,34 @@ class Agent:
     DNA_length = 500 # Allow for dynamic DNA length to be easily changed
     DNA = [None] * DNA_length # This will hold the list of actions that the agent will take
     fitness_score = 0 # Stores the agents fitness score computed after final movement has been made, LOWER score is better!
-    DNA_mutate_strand = (DNA // 10) # A holder variable that captures an integer value representing 10 percept of an agent's DNA
+    DNA_mutate_strand = (DNA_length // 10) # A holder variable that captures an integer value representing 10 percept of an agent's DNA
 
     #########################################
     #### Class Methods 
     #########################################
 
     # initial randomized constructor, to be used to create first generation
-    def __init__(self, maze):
-        # generate 50 random actions/movements to seed the first generation
-        for x in range(self.DNA_length):
-            self.DNA[x] = random.choice(['L', 'F', 'R'])
-        # spawn the agent at the start of the maze
-        self.current_position = copy.deepcopy(maze.MAZE_START)
-        self.previous_position = copy.deepcopy(maze.MAZE_START)
-
-    # Another constructor to be used in the crossover function for creating new agents
-    # This constructor takes an array of DNA resulting from reproduction between 2 parents
-    def __init__(self, DNA_array, maze):
-        self.DNA = DNA_array    # Give this agent his new DNA sequence
-        # spawn the agent at the start of the maze
-        self.current_position = copy.deepcopy(maze.MAZE_START)
-        self.previous_position = copy.deepcopy(maze.MAZE_START)
-
+    def __init__(self, maze, DNA_array = None):
+        # Overloading constructors in Python involves handing all possible
+        # instances of the constructor within 1 method
+        # So, we start with the first implementation: the case where we are
+        # initializing the seed population by giving them a random DNA sequence
+        if DNA_array == None:
+            # generate 50 random actions/movements to seed the first generation
+            for x in range(self.DNA_length):
+                self.DNA[x] = random.choice(['L', 'F', 'R'])
+            # spawn the agent at the start of the maze
+            self.current_position = copy.deepcopy(maze.MAZE_START)
+            self.previous_position = copy.deepcopy(maze.MAZE_START)
+        # Now we turn to the secondary implementaiton for agents which happens
+        # during reproduction when a new child is born
+        else:
+            # Another constructor to be used in the crossover function for creating new agents
+            # This constructor takes an array of DNA resulting from reproduction between 2 parents
+            self.DNA = DNA_array    # Give this agent his new DNA sequence
+            # spawn the agent at the start of the maze
+            self.current_position = copy.deepcopy(maze.MAZE_START)
+            self.previous_position = copy.deepcopy(maze.MAZE_START)
 
     # update the agents orientation according to which direction it turns
     # dir: direction agent moves
@@ -205,11 +210,16 @@ class Agent:
         # calculate distance from final agent position to maze exit
         # d = sqrt((mazeX - agentX)^2 + (mazeY-agentY)^2)
         # save operation complexity by not square rooting
+
+        # TODO We're catching an exception with our distance function in this next line of code.  Something about 
+        # an array not having an argument equivalent to maze.MAZE_EXIT
+
         distance = (maze.MAZE_EXIT[1] - self.current_position[1])**2 + (maze.MAZE_EXIT[0] - self.current_position[0])**2
         # arbitrary number chosen to subtract distance from to make fitter agents have higher scores
         score = 150 - distance
         self.fitness_score = score
     
+
 
 
 # Testing movement and object collision detection

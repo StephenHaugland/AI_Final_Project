@@ -7,7 +7,6 @@ import pygame # import pygame library to display graphics
 import Agent  # import user defined agent class to represent maze navigating agents
 import Maze   # import user defined Maze class to represent the environment
 
-
 # Initialize the pygame library that facilitates the graphical maze
 pygame.init()
  
