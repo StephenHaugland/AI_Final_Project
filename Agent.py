@@ -35,6 +35,14 @@ class Agent:
         self.current_position = copy.deepcopy(maze.MAZE_START)
         self.previous_position = copy.deepcopy(maze.MAZE_START)
 
+    # Another constructor to be used in the crossover function for creating new agents
+    # This constructor takes an array of DNA resulting from reproduction between 2 parents
+    def __init__(self, DNA_array, maze):
+        self.DNA = DNA_array    # Give this agent his new DNA sequence
+        # spawn the agent at the start of the maze
+        self.current_position = copy.deepcopy(maze.MAZE_START)
+        self.previous_position = copy.deepcopy(maze.MAZE_START)
+
 
     # update the agents orientation according to which direction it turns
     # dir: direction agent moves
@@ -135,7 +143,9 @@ class Agent:
     # We choose to use a scrambled version of DNA mutation where 
     # we take a DNA strand that is a predetermined percentage of
     # an agent's total DNA size and we scramble the contents of
-    # of that strand and then put the scrambled strand back in place
+    # that strand and then put the scrambled strand back in place
+    # Our current predetermined DNA mutation strand percentage 
+    # (represented by DNA_mutate_strand) is 10%
     def mutate(self):
         # We need to find a random starting index within this agent's DNA strand to begin the mutation
         # We declare a variable that captures a random integer.  This random integer has to be 
@@ -150,25 +160,27 @@ class Agent:
         # of DNA from this agent that will be scrambled
         # Iterate through this agent's DNA sequence for the length of the
         # predetermined mutation DNA sequence
-        for i in range(self.DNA_mutate_strand):
+        # We need our iterator to start at zero on account of array indices beginning at zero
+        i = 0
+        # Initialize a loop that will iterate once for every gene in the mutation strand
+        for i in range(self.DNA_mutate_strand - 1):
             # Load the mutation sequence array with the agent's DNA sequnence
             # beginning at the random starting index
-            # But we have to take into account that arrays begin at index 0
-            # and also we have to prevent the strand for going out of bounds
-            # hence the [(start_index + i) - 1]
-            mutation_sequence.append(self.DNA[(start_index + i) - 1])
+            mutation_sequence.append(self.DNA[(start_index + i)])
 
         # Now that we've captured the strand to be scrambled, we scramble it
         mutation_sequence.scramble()
 
         # Now that the sequence has been scrambled, we can put it back
-        for i in range(self.DNA_mutate_strand):
+        k = 0
+        # Initialize a loop that will iterate once for every gene in the strand that has now been mutated
+        for k in range(self.DNA_mutate_strand - 1):
             # Find the place in the agent's DNA strand where the mutation sequence was pulled
             # and start at that index replacing indices with the scrambled values
-            self.DNA[(start_index + i) - 1] = mutation_sequence[i - 1]
+            self.DNA[(start_index + k)] = mutation_sequence[k]
 
-            # return the mutated agent
-            return self
+        # return the mutated agent
+        return self
             
 
     # Test function to display DNA
