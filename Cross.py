@@ -21,7 +21,7 @@ class Population:
 
     pop_size = None             # The size of each generation of agents
     Agent_quiver = [None]       # An array containing pop_size Agent objects
-    number_of_survivors = 20    # A constant value representing the top 20 agents of each generation
+    number_of_survivors = pop_size // 2    # A constant value representing the top 20 agents of each generation
     global_gen_counter = 0      # A counter that tracks how many generations throughout the simulation
 
     #########################################
@@ -36,6 +36,8 @@ class Population:
             agents.append(Agent.Agent(maze))
         self.Agent_quiver = agents
 
+
+
     # This method selects the parents for the next generation using Roulette Wheel Selection
     # Implementation details referenced from: https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
     # In this method there is selection pressure towards fitter individuals but there is a chance for any agent to become a parent
@@ -49,33 +51,57 @@ class Population:
         # Begin by aligning the population of agents from the weakest to the fittest (Fitter agents have higher scores)
     #    ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
 
-   #     selection_boundaries = [0]
-   #     for i, j in range(len(self.Agent_quiver)):
-   #         selection_boundaries.append(selection_boundaries[i] + ) 
+        # Recursively generate boundaries between 0 and 1 that split up the number space into probabilites for each agent
+        # This way each agent will have certain probability to reproduce with those who have a higher fitness getting a larger chance to mate
+        selection_boundaries = [0]
+        for i in range(len(self.Agent_quiver) - 1):
+            # add the previous fitness proportion to the current fitness proportion to get a new boundary
+            selection_boundaries.append(selection_boundaries[i] + ((ordered_agents[i].fitness_score)/sum))
+        #selection_boundaries.append(1)
 
+        # Now we have n boundaries between 0 and 1 where n = the number of agents
+        # The number line between 0 and 1 is split into n different sections in between boundaries
+        # Now a random number is chosen between 0 and 1 to see which parents get selected
+       
+        # This holds the indices that point to selected parents from the original populations quiver
+        parent_indices = []
+        previously_selected_parent = None
+        for x in range(self.pop_size):
+            # This random selection will occur n times
+            r = random.random()
+            # find the index of the parent that got randomly selected
+            selected_parent_index = findClosest(selection_boundaries, len(selection_boundaries), r)
+            if (selected_parent_index == previously_selected_parent):
+                # iterate loop counter to ensure N parents are selected
+                x -= 1
+                print("Parent cannot mate with itself")
+            else:
+                # add this index to the list of indices it was not just added
+                parent_indices.append(selected_parent_index)
+                # update previous selection for next round
+                previously_selected_parent = copy.deepcopy(selected_parent_index)
+        return parent_indices
             
-    #    Rand = random.randint(0,sum)
 
-    # This method takes in a generation of agents,
-    # orders them from fittest to weakest and returns 
-    # a randomized order of the surviving parents 
+
+
+  
+
+    # This method removes the least fit agents from the population based on number of survivors defined in Population class
+    # This method is called at the end of each 
     def kill_the_weak(self):
-        # First we have to kill off the weakest from the previous generation
-        # Survival of the fittest is gruesome
-        # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have lower scores)
-        Ordered_agents = sorted(self.Agent_quiver, key = self.Agent_quiver.fitness, reverse = True)
-        # Now we kill half of the population
-        # Let's initialize an array half the size of our population
-        # to hold the survivors
-        Fittest = [self.number_of_survivors]
-        # Now we iterate through the list of ordered agents saving the top half
+        # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have higher scores)
+        ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
+        # Now we kill a portion of the population
+        # Let's initialize an array to hold the survivors
+        Fittest = []
+        # Now we iterate through the list of fitness sorted agents saving the fittest portion
         for agent in range((self.number_of_survivors)):
-            Fittest.append(Ordered_agents[agent])
-        # We want this reproductive process to be random between the surviving parents
-        # Therefore we need to randomize the order or the parent array
-        Fittest.shuffle()
+            Fittest.append(ordered_agents[agent])
+        # Copy over the fittest agents into the new quiver 
+        self.Agent_quiver = copy.deepcopy(Fittest)
 
-        return Fittest
+
     
     # Function to define DNA crossover reproduction
     # Because the directional order of an agent's movements will lead to
@@ -253,6 +279,79 @@ class Population:
         # return a new generation of agents
         return new_pop
 
+##########################################################
+# This code below is contributed by Smitha Dinesh Semwal 
+##########################################################
+# This code uses binary search to locate the closet element in a list to a target value
+# These two function defined below were found at: https://www.geeksforgeeks.org/find-closest-number-array/
+# All credit belongs to Smitha Dinesh Semwal
+# Modification made to code to return the single index value that the target lies in
+# Returns element closest to target in arr[] 
+def findClosest(arr, n, target): 
+  
+    # Corner cases 
+    if (target <= arr[0]): 
+        return 0 
+    if (target >= arr[n - 1]): 
+        return (n - 2)
+  
+    # Doing binary search 
+    i = 0; j = n; mid = 0
+    while (i < j):  
+        mid = (i + j) // 2
+  
+        if (arr[mid] == target): 
+            return mid
+  
+        # If target is less than array  
+        # element, then search in left 
+        if (target < arr[mid]) : 
+  
+            # If target is greater than previous 
+            # to mid, return closest of two 
+            if (mid > 0 and target > arr[mid - 1]): 
+                return getClosest(arr[mid - 1], arr[mid], (mid-1), mid, target) 
+  
+            # Repeat for left half  
+            j = mid 
+          
+        # If target is greater than mid 
+        else : 
+            if (mid < n - 1 and target < arr[mid + 1]): 
+                return getClosest(arr[mid], arr[mid + 1], mid, (mid + 1), target) 
+                  
+            # update i 
+            i = mid + 1
+          
+    # Only single element left after search 
+    return mid 
+  
+  
+# Method to compare which one is the more close. 
+# We find the closest by taking the difference 
+# between the target and both values. It assumes 
+# that val2 is greater than val1 and target lies 
+# between these two. 
+def getClosest(val1, val2, index1, index2, target): 
+  
+    # if (target - val1 >= val2 - target): 
+    #     return index2
+    # else: 
+    #     return index1
+
+    # modified to return what index boundary the target lies in
+    return index1
+  
+# Driver code 
+arr = [0, 0.1, 0.25, 0.4, 0.6, 0.99, 1]  
+n = len(arr) 
+target = 1
+
+print(findClosest(arr, n, target)) 
+
+#######################################################
+# The code above is contributed by Smitha Dinesh Semwal 
+#######################################################
 
 
 
@@ -261,6 +360,9 @@ class Population:
 agent_holder_arr = []
 test_agent_pop = 50
 for x in range(test_agent_pop):
+    #agent_holder_arr.append(Agent.Agent(Maze.maze()))
+    #print(agent_holder_arr[x].DNA_length)
+    pass
     test_bot = Agent.Agent(Maze.Maze()) 
     agent_holder_arr.append(test_bot)
     
