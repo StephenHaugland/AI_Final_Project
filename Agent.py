@@ -199,8 +199,7 @@ class Agent:
     # TODO crossover constructor
     # constructor used in crossover
     #def __init__(self, mom, dad):
-        # figure out algorithm to combine two agents DNA
-
+    # figure out algorithm to combine two agents DNA
     # maze: 2D array agent is navigating through
     def calculate_fitness(self, maze):
         # calculate distance from final agent position to maze exit
