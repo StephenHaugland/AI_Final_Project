@@ -89,7 +89,7 @@ while not done:
     # check if agent still has moves to execute
     if (actionNumber < Ricky.DNA_length):
         # For every frame, move the agent once
-        Moved = Ricky.move(actionNumber, Maze.MAZE_GRID)
+        Moved = Ricky.move(actionNumber, Maze)
         # iterate which action will be performed
         actionNumber += 1
         # if the agent changed positions update the screen accordingly
