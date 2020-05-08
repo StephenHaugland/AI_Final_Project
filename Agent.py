@@ -26,7 +26,8 @@ class Agent:
     #### Class Methods 
     #########################################
 
-    # initial randomized constructor, to be used to create first generation
+    # Agent constructor includes two implementations of agents
+    # One for the first generation, and one for subsequent generations
     def __init__(self, maze, DNA_array = None):
         # Overloading constructors in Python involves handing all possible
         # instances of the constructor within 1 method
@@ -139,8 +140,10 @@ class Agent:
 
         # Once the agent has completed its last action, calculate fitness
         # TODO move this to controller 
-        if (action_iterator == (self.DNA_length - 1)):
-            self.calculate_fitness(maze)
+    #-------------------------------------------------------------
+       # if (action_iterator == (self.DNA_length - 1)):
+       #     self.calculate_fitness(maze)
+    #-------------------------------------------------------------
 
         return changed_position
 
@@ -148,7 +151,7 @@ class Agent:
     # We choose to use a scrambled version of DNA mutation where 
     # we take a DNA strand that is a predetermined percentage of
     # an agent's total DNA size and we scramble the contents of
-    # that strand and then put the scrambled strand back in place
+    # that strand and then put the scrambled strand back in place.
     # Our current predetermined DNA mutation strand percentage 
     # (represented by DNA_mutate_strand) is 10%
     def mutate(self):
@@ -197,13 +200,6 @@ class Agent:
     # constructor used in crossover
     #def __init__(self, mom, dad):
         # figure out algorithm to combine two agents DNA
-
-
-    # TODO mutation
-    def mutate(self):
-        pass
-
-
 
     # maze: 2D array agent is navigating through
     def calculate_fitness(self, maze):

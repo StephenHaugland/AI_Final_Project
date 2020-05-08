@@ -101,7 +101,8 @@ while not done:
             # update the new position to white
             color = WHITE
             pygame.draw.rect(screen, color, [Maze.CELL_SIZE * Ricky.current_position[0], Maze.CELL_SIZE * Ricky.current_position[1], Maze.CELL_SIZE, Maze.CELL_SIZE])
-
+    else:
+        Ricky.calculate_fitness(Maze)
     
     # Add a delay so agent movement can be observed
     pygame.time.wait(60)

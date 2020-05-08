@@ -3,6 +3,9 @@
 # This file creates a population of agents 
 # and defines the DNA crossover of successive populations as well as mutations
 
+# An import that I will probably only need to data testing
+import Maze
+
 import Agent        # Import user defined class that defines individual agents
 import Controller   # Import user defined class that instantiates our maze object
 import random       # Import Python random library for generating random numbers
@@ -60,13 +63,6 @@ class Population:
         Fittest.shuffle()
 
         return Fittest
-
-
-
-        # TODO NUMBER OF PARENTS TO BE SELECTED AND PARENTS TO LIVE ON INTO NEXT GEN!!
-        # TODO RUN SOME TESTS TO MAKE SURE THAT THESE FUNCTIONS ARE DOING WHAT YOU'RE INTENDING FOR THEM TO DO!!            
-    
-    
     
     # Function to define DNA crossover reproduction
     # Because the directional order of an agent's movements will lead to
@@ -164,17 +160,17 @@ class Population:
                     new_child_DNA[x] = self.Agent_quiver[j].DNA[x]
 
                 # Now that we've filled up the end of the child DNA structure,
-                # we come back around to the front end  and fill each index up to
+                # we come back around to the front end and fill each index up to
                 # the index that lands directly before the p1 strand begins
-                y = 0
-                while y < p1_DNA_start_index:
-                    new_child_DNA[y] = self.Agent_quiver[j].DNA[y]
-
-            # This is the case where the p1 strand fits precisely at the end of the child array
-            else:
                 x = 0
                 while x < p1_DNA_start_index:
                     new_child_DNA[x] = self.Agent_quiver[j].DNA[x]
+
+            # This is the case where the p1 strand fits precisely at the end of the child array
+            else:
+                y = 0
+                while y < p1_DNA_start_index:
+                    new_child_DNA[y] = self.Agent_quiver[j].DNA[y]
 
             # Now we create a new child infusing them with the DNA resulting
             # from the above reproduction process
@@ -184,7 +180,7 @@ class Population:
             # The last part of the reproductive process is to introduce mutation
             # We want to only introduce mutation a small percentage of the time.
             # Also, we want the percentage of time that a child's genes get mutated 
-            # to be highest in the beginning generations and decrease with successive generations
+            # to be highest in the beginning generations and decrease with successive generations.
             # First we determine if this regeneration iteration is within the first
             # 10 generations.  If so, we'll mutate new children at a rate of 15%
             if self.global_gen_counter < 11:
@@ -195,7 +191,6 @@ class Population:
                 if mutate_rate < .15:
                     # Mutate this child
                     new_child.mutate()
-                    # TODO DO I NEED TO END ON AN ELIF OR ELSE OR IS IT OKAY TO NOT DO SO?
 
             # This elif loop will catch generations 10 - 20 and initiate mutation 10% of the time
             elif self.global_gen_counter > 10 and self.global_gen_counter < 21:
@@ -207,8 +202,8 @@ class Population:
                     # Mutate this child
                     new_child.mutate()
 
-            # This elif loop will catch all generations past 20 and initiate mutation 5% of the time
-            elif self.global_gen_counter > 20:
+            # This else loop will catch all generations past 20 and initiate mutation 5% of the time
+            else:
                 # Randomly generate a float between 0 and 1
                 mutate_rate = random.random()
                 # If this randomly generated float is less than .05, that represents 
@@ -223,8 +218,24 @@ class Population:
             # need to add the child from this iteration to our new population
             new_pop.append(new_child)
 
+            # We need to increment our i and j variables an extra digit so that they jump 2 indices every loop
+            i += 1
+            j += 1
+
         # Let's increment the generation counter before we return from this method
         self.global_gen_counter += 1
 
         # return a new generation of agents
         return new_pop
+
+
+
+
+# ------------------------ TEST AREA ------------------------------------------
+
+agent_holder_arr = []
+test_agent_pop = 50
+for x in range(test_agent_pop):
+    agent_holder_arr.append(Agent.Agent(Maze.maze()))
+    print(agent_holder_arr[x].DNA_length)
+
