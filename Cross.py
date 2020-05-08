@@ -7,6 +7,7 @@ import Agent        # Import user defined class that defines individual agents
 import Controller   # Import user defined class that instantiates our maze object
 import random       # Import Python random library for generating random numbers
 import copy         # Import Python copy library for making deep copies
+from operator import itemgetter, attrgetter # used in sorting agents by fitness score
 
 # Population class
 # Class for organinizing the agent population and reproduction
@@ -26,17 +27,30 @@ class Population:
     #########################################
 
     # Population constructor to initiate a population of agents to traverse the maze
-    def __init__(self, agents, size):
+    def __init__(self, size, maze):
         self.pop_size = size
+        agents = []
+        for _ in range(size):
+            agents.append(Agent.Agent(maze))
         self.Agent_quiver = agents
 
     # This method selects the parents for the next generation using Roulette Wheel Selection
     # Implementation details referenced from: https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
     # In this method there is selection pressure towards fitter individuals but there is a chance for any agent to become a parent
     def selection(self):
+        # sum of all fitness values
         sum = 0
+        # add up all fitness scores
         for x in range(len(self.Agent_quiver)):
             sum += self.Agent_quiver[x].fitness_score
+
+        # Begin by aligning the population of agents from the weakest to the fittest (Fitter agents have higher scores)
+        ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
+
+        selection_boundaries = [0]
+        for i, j in range(len(self.Agent_quiver)):
+            selection_boundaries.append(selection_boundaries[i] + ) 
+
             
         Rand = random.randint(0,sum)
 
