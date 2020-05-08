@@ -120,7 +120,7 @@ class Agent:
         next_position = self.calculate_next_pos(action)
 
         # If the next position is not blocked, move there
-        if maze[next_position[1]][next_position[0]] == 0:
+        if maze.MAZE_GRID[next_position[1]][next_position[0]] == 0:
             # Set the flag that the agent has moved
             changed_position = True
             # change previously held position back to a zero
