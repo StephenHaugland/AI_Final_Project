@@ -106,6 +106,8 @@ class Population:
         # variable i will be tied to p1 and j will be tied to p2
         for i in range(len(self.Agent_quiver)):
             j = 1
+            print("This iteration of the mating loop i is: " + str(i))
+            print("This iteration of j is: " + str(j))
             # Initialize a dynamic array that will hold the specific sequence of DNA
             # from p1 that will be passed to the child
             DNA_holder = []
