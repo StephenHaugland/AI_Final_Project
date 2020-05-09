@@ -36,12 +36,17 @@ class Population:
             agents.append(Agent.Agent(maze))
         self.Agent_quiver = agents
 
+    # Calculates the fitness for every agent in the population
+    # Should be called after each round of movement has completed
+    def calculate_fitness(self):
+        for x in self.pop_size:
+            self.Agent_quiver[x].calculate_fitness()
 
 
     # This method selects the parents for the next generation using Roulette Wheel Selection
     # Implementation details referenced from: https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
     # In this method there is selection pressure towards fitter individuals but there is a chance for any agent to become a parent
-  #  def selection(self):
+    def selection(self):
         # sum of all fitness values
     #    sum = 0
         # add up all fitness scores
@@ -71,10 +76,14 @@ class Population:
             r = random.random()
             # find the index of the parent that got randomly selected
             selected_parent_index = findClosest(selection_boundaries, len(selection_boundaries), r)
+
+            # prevent self-mating
+            # if same parent is selcted two times in a row, go through loop again to select a new parent
             if (selected_parent_index == previously_selected_parent):
-                # iterate loop counter to ensure N parents are selected
+                # decrement loop counter to ensure N parents are selected
                 x -= 1
                 print("Parent cannot mate with itself")
+            # else if the selected parent is a different agent then the previously selected agent, add to selection list
             else:
                 # add this index to the list of indices it was not just added
                 parent_indices.append(selected_parent_index)
@@ -88,7 +97,7 @@ class Population:
   
 
     # This method removes the least fit agents from the population based on number of survivors defined in Population class
-    # This method is called at the end of each 
+    # This method is called each time new children have been created
     def kill_the_weak(self):
         # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have higher scores)
         ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
@@ -285,8 +294,8 @@ class Population:
 # This code uses binary search to locate the closet element in a list to a target value
 # These two function defined below were found at: https://www.geeksforgeeks.org/find-closest-number-array/
 # All credit belongs to Smitha Dinesh Semwal
-# Modification made to code to return the single index value that the target lies in
-# Returns element closest to target in arr[] 
+#### Modification made to code to return the single index value that the target lies in
+# Returns the index corresponding to the selected parent based on the random value passed into target 
 def findClosest(arr, n, target): 
   
     # Corner cases 
@@ -349,10 +358,9 @@ target = 1
 
 print(findClosest(arr, n, target)) 
 
-#######################################################
-# The code above is contributed by Smitha Dinesh Semwal 
-#######################################################
-
+##################################################################################
+# The code above is contributed by Smitha Dinesh Semwal, with slight modification 
+##################################################################################
 
 
 # ------------------------ TEST AREA ------------------------------------------
