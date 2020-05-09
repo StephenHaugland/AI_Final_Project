@@ -19,42 +19,52 @@ class Population:
     #### Class Attributes 
     #########################################
 
-    pop_size = None             # The size of each generation of agents
+    pop_size = 50             # The size of each generation of agents
     Agent_quiver = [None]       # An array containing pop_size Agent objects
     number_of_survivors = pop_size // 2    # A constant value representing the top 20 agents of each generation
     global_gen_counter = 0      # A counter that tracks how many generations throughout the simulation
+    agent_DNA_length = None     # Store how long the agents DNA strands are
+    # Should we include a maze that the population is bound to for ease of access?
+    maze = Maze.Maze()
 
     #########################################
     #### Class Methods 
     #########################################
 
     # Population constructor to initiate a population of agents to traverse the maze
-    def __init__(self, size, maze):
+    def __init__(self, size, maze, dna_length):
         self.pop_size = size
+        self.agent_DNA_length = dna_length
+        self.maze = maze
         agents = []
         for _ in range(size):
-            agents.append(Agent.Agent(maze))
+            Agent007 = copy.deepcopy(Agent.Agent(self.maze, dna_length))
+            agents.append(Agent007)
         self.Agent_quiver = agents
 
     # Calculates the fitness for every agent in the population
     # Should be called after each round of movement has completed
     def calculate_fitness(self):
-        for x in self.pop_size:
-            self.Agent_quiver[x].calculate_fitness()
+        for x in range(len(self.Agent_quiver)):
+            self.Agent_quiver[x].calculate_fitness(self.maze)
 
+    # Move every agent in the population one step based on DNA index
+    def move(self, DNA_index):
+        for x in self.pop_size:
+            self.Agent_quiver[x].move(DNA_index,self.maze)
 
     # This method selects the parents for the next generation using Roulette Wheel Selection
     # Implementation details referenced from: https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
     # In this method there is selection pressure towards fitter individuals but there is a chance for any agent to become a parent
     def selection(self):
         # sum of all fitness values
-    #    sum = 0
+        sum = 0
         # add up all fitness scores
-    #    for x in range(len(self.Agent_quiver)):
-    #         sum += self.Agent_quiver[x].fitness_score
+        for x in range(len(self.Agent_quiver)):
+             sum += self.Agent_quiver[x].fitness_score
 
         # Begin by aligning the population of agents from the weakest to the fittest (Fitter agents have higher scores)
-    #    ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
+        ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
 
         # Recursively generate boundaries between 0 and 1 that split up the number space into probabilites for each agent
         # This way each agent will have certain probability to reproduce with those who have a higher fitness getting a larger chance to mate
@@ -62,7 +72,7 @@ class Population:
         for i in range(len(self.Agent_quiver) - 1):
             # add the previous fitness proportion to the current fitness proportion to get a new boundary
             selection_boundaries.append(selection_boundaries[i] + ((ordered_agents[i].fitness_score)/sum))
-        #selection_boundaries.append(1)
+        selection_boundaries.append(1)
 
         # Now we have n boundaries between 0 and 1 where n = the number of agents
         # The number line between 0 and 1 is split into n different sections in between boundaries
@@ -236,6 +246,7 @@ class Population:
             # from the above reproduction process
             # TODO I need to confirm that this is the correct way to tie new agents to our maze
             new_child = Agent.Agent(new_child_DNA, Maze.Maze)
+            #### new_child = Agent.Agent(new_child_DNA, self.maze)
 
             # The last part of the reproductive process is to introduce mutation
             # We want to only introduce mutation a small percentage of the time.
@@ -352,11 +363,11 @@ def getClosest(val1, val2, index1, index2, target):
     return index1
   
 # Driver code 
-arr = [0, 0.1, 0.25, 0.4, 0.6, 0.99, 1]  
-n = len(arr) 
-target = 1
+# arr = [0, 0.1, 0.25, 0.4, 0.6, 0.99, 1]  
+# n = len(arr) 
+# target = 1
 
-print(findClosest(arr, n, target)) 
+# print(findClosest(arr, n, target)) 
 
 ##################################################################################
 # The code above is contributed by Smitha Dinesh Semwal, with slight modification 
@@ -365,20 +376,20 @@ print(findClosest(arr, n, target))
 
 # ------------------------ TEST AREA ------------------------------------------
 
-agent_holder_arr = []
-test_agent_pop = 50
-for x in range(test_agent_pop):
-    #agent_holder_arr.append(Agent.Agent(Maze.maze()))
-    #print(agent_holder_arr[x].DNA_length)
-    pass
-    test_bot = Agent.Agent(Maze.Maze()) 
-    agent_holder_arr.append(test_bot)
+# agent_holder_arr = []
+# test_agent_pop = 50
+# for x in range(test_agent_pop):
+#     #agent_holder_arr.append(Agent.Agent(Maze.maze()))
+#     #print(agent_holder_arr[x].DNA_length)
+#     pass
+#     test_bot = Agent.Agent(Maze.Maze()) 
+#     agent_holder_arr.append(test_bot)
     
+# # added dna length argument to population constructor
+# Test_pop = Population(test_agent_pop, Maze.Maze(),500)
+# Test_pop.Agent_quiver = agent_holder_arr
 
-Test_pop = Population(test_agent_pop, Maze.Maze())
-Test_pop.Agent_quiver = agent_holder_arr
-
-Test_pop.crossover()
+# Test_pop.crossover()
 
 
 #for x in range(test_agent_pop):

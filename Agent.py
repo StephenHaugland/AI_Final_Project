@@ -18,7 +18,7 @@ class Agent:
     previous_position = [1,20] # Store the agent's previous position to repaint black on the screen
     current_position = [1,20] # Start each agent at the starting point of the maze
     DNA_length = 500 # Allow for dynamic DNA length to be easily changed
-    DNA = [None] * DNA_length # This will hold the list of actions that the agent will take
+    
     fitness_score = 0 # Stores the agents fitness score computed after final movement has been made, LOWER score is better!
     DNA_mutate_strand = (DNA_length // 10) # A holder variable that captures an integer value representing 10 percept of an agent's DNA
 
@@ -28,15 +28,17 @@ class Agent:
 
     # Agent constructor includes two implementations of agents
     # One for the first generation, and one for subsequent generations
-    def __init__(self, maze, DNA_array = None):
+    def __init__(self, maze, dna_length, DNA_array = None):
         # Overloading constructors in Python involves handing all possible
         # instances of the constructor within 1 method
+        self.DNA_length = dna_length
+        self.DNA = [] # This will hold the list of actions that the agent will take
         # So, we start with the first implementation: the case where we are
         # initializing the seed population by giving them a random DNA sequence
         if DNA_array == None:
             # generate 50 random actions/movements to seed the first generation
-            for x in range(self.DNA_length):
-                self.DNA[x] = random.choice(['L', 'F', 'R'])
+            for _ in range(self.DNA_length):
+                self.DNA.append(random.choice(['L', 'F', 'R']))
             # spawn the agent at the start of the maze
             self.current_position = copy.deepcopy(maze.MAZE_START)
             self.previous_position = copy.deepcopy(maze.MAZE_START)
@@ -209,9 +211,9 @@ class Agent:
         # TODO We're catching an exception with our distance function in this next line of code.  Something about 
         # an array not having an argument equivalent to maze.MAZE_EXIT
 
-        distance = (maze.MAZE_EXIT[1] - self.current_position[1])**2 + (maze.MAZE_EXIT[0] - self.current_position[0])**2
+        distance = (abs(maze.MAZE_EXIT[1] - self.current_position[1])) + (abs(maze.MAZE_EXIT[0] - self.current_position[0]))
         # arbitrary number chosen to subtract distance from to make fitter agents have higher scores
-        score = 150 - distance
+        score = 100 - distance
         self.fitness_score = score
     
 

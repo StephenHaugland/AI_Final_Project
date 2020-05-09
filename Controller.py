@@ -6,6 +6,8 @@
 import pygame # import pygame library to display graphics
 import Agent  # import user defined agent class to represent maze navigating agents
 import Maze   # import user defined Maze class to represent the environment
+import Cross  # import user defined Population Class
+import random
 
 # Initialize the pygame library that facilitates the graphical maze
 pygame.init()
@@ -60,8 +62,12 @@ for row in range(41):
 
 
 # Create an agent to navigate the maze
-Ricky = Agent.Agent(Maze)
+Ricky = Agent.Agent(Maze, 500)
 Ricky.print_DNA()
+
+
+# Seed the first population to navigate the maze
+test_population = Cross.Population(25, Maze, 100)
 
 # -------- Main Program Loop -----------
 
@@ -96,23 +102,42 @@ while not done:
     # Bool variable that gets SET if agent could move and changed positions
     Moved = False 
 
-    # check if agent still has moves to execute
-    if (actionNumber < Ricky.DNA_length):
-        # For every frame, move the agent once
-        Moved = Ricky.move(actionNumber, Maze)
-        # iterate which action will be performed
+    # Check if agents still have moves to execute
+    if (actionNumber < test_population.agent_DNA_length):
+        # move every agent once
+        for x in range(test_population.pop_size):
+            Moved = test_population.Agent_quiver[x].move(actionNumber,test_population.maze)
+        
+            if Moved == True:
+                #change the previous position to black
+                color = BLACK
+                #Peek line 66 for draw.rect() argument explanation
+                pygame.draw.rect(screen, color, [Maze.CELL_SIZE * test_population.Agent_quiver[x].previous_position[0], Maze.CELL_SIZE * test_population.Agent_quiver[x].previous_position[1], Maze.CELL_SIZE, Maze.CELL_SIZE])
+                #update the new position to white
+                color = WHITE
+                pygame.draw.rect(screen, color, [Maze.CELL_SIZE * test_population.Agent_quiver[x].current_position[0], Maze.CELL_SIZE * test_population.Agent_quiver[x].current_position[1], Maze.CELL_SIZE, Maze.CELL_SIZE])
+        # increment which DNA genome is firing
         actionNumber += 1
-        # if the agent changed positions update the screen accordingly
-        if Moved == True:
-            # change the previous position to black
-            color = BLACK
-            # Peek line 66 for draw.rect() argument explanation
-            pygame.draw.rect(screen, color, [Maze.CELL_SIZE * Ricky.previous_position[0], Maze.CELL_SIZE * Ricky.previous_position[1], Maze.CELL_SIZE, Maze.CELL_SIZE])
-            # update the new position to white
-            color = WHITE
-            pygame.draw.rect(screen, color, [Maze.CELL_SIZE * Ricky.current_position[0], Maze.CELL_SIZE * Ricky.current_position[1], Maze.CELL_SIZE, Maze.CELL_SIZE])
+    # once a full round of movement has occurred, exit loop
     else:
-        Ricky.calculate_fitness(Maze)
+        done = True
+    # # check if agent still has moves to execute
+    # if (actionNumber < Ricky.DNA_length):
+    #     # For every frame, move the agent once
+    #     Moved = Ricky.move(actionNumber, Maze)
+    #     # iterate which action will be performed
+    #     actionNumber += 1
+    #     # if the agent changed positions update the screen accordingly
+    #     if Moved == True:
+    #         # change the previous position to black
+    #         color = BLACK
+    #         # Peek line 66 for draw.rect() argument explanation
+    #         pygame.draw.rect(screen, color, [Maze.CELL_SIZE * Ricky.previous_position[0], Maze.CELL_SIZE * Ricky.previous_position[1], Maze.CELL_SIZE, Maze.CELL_SIZE])
+    #         # update the new position to white
+    #         color = WHITE
+    #         pygame.draw.rect(screen, color, [Maze.CELL_SIZE * Ricky.current_position[0], Maze.CELL_SIZE * Ricky.current_position[1], Maze.CELL_SIZE, Maze.CELL_SIZE])
+    # else:
+    #     Ricky.calculate_fitness(Maze)
     
     # Add a delay so agent movement can be observed
     pygame.time.wait(60)
@@ -121,6 +146,11 @@ while not done:
     clock.tick(60)
     # Go ahead and update the screen with what we've drawn.
     pygame.display.update()
+
+# Display the fitness of each agent
+test_population.calculate_fitness()
+for x in range(test_population.pop_size):
+    print(test_population.Agent_quiver[x].fitness_score)
 
 # Be IDLE friendly. If you forget this line, the program will 'hang' on exit.
 pygame.quit()
