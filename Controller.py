@@ -78,6 +78,16 @@ while not done:
             # by changing the loop flag to True
             done = True
 
+    ########################################################
+    # Basic Genetic Algorithm Pseudo Code from my understanding:
+    # 1: Seed first generation
+    # 3: do while(TerminationCondition != True):
+    # 4:    population.move()
+    # 5:    population.calculate_fitness()
+    # 6:    population.select_parents()
+    # 7:    population.crossover&mutate()
+    # 8:    population.kill_the_weak()
+    #########################################################
 
     ################
     # Agent movement
