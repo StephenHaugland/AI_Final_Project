@@ -43,7 +43,7 @@ class Population:
         self.Agent_quiver = agents
 
     # Calculates the fitness for every agent in the population
-    # Should be called after each round of movement has completed
+    # Should be called after after each round of movement
     def calculate_fitness(self):
         for x in range(len(self.Agent_quiver)):
             self.Agent_quiver[x].calculate_fitness(self.maze)
@@ -100,10 +100,6 @@ class Population:
                 # update previous selection for next round
                 previously_selected_parent = copy.deepcopy(selected_parent_index)
         return parent_indices
-            
-
-
-
   
 
     # This method removes the least fit agents from the population based on number of survivors defined in Population class
@@ -347,7 +343,7 @@ def findClosest(arr, n, target):
     return mid 
   
   
-# Method to compare which one is the more close. 
+# Method to compare which proportional value is closest to the target. 
 # We find the closest by taking the difference 
 # between the target and both values. It assumes 
 # that val2 is greater than val1 and target lies 

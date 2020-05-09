@@ -29,11 +29,14 @@ class Agent:
     # Agent constructor includes two implementations of agents
     # One for the first generation, and one for subsequent generations
     def __init__(self, maze, dna_length, DNA_array = None):
-        # Overloading constructors in Python involves handing all possible
+        # Overloading constructors in Python involves handling all possible
         # instances of the constructor within 1 method
+        # We begin by establishing 2 variables that every agent will have
+        # An integeger variable holding the length of their DNA structure
         self.DNA_length = dna_length
-        self.DNA = [] # This will hold the list of actions that the agent will take
-        # So, we start with the first implementation: the case where we are
+        # And a DNA array to hold their DNA sequence (which is really a list of actions that the agent will take)
+        self.DNA = [] 
+        # So, now we start with the first implementation: the case where we are
         # initializing the seed population by giving them a random DNA sequence
         if DNA_array == None:
             # generate 50 random actions/movements to seed the first generation
