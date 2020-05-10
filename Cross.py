@@ -34,6 +34,7 @@ class Population:
     # Population constructor to initiate a population of agents to traverse the maze
     def __init__(self, size, maze, dna_length):
         self.pop_size = size
+        self.number_of_survivors = size // 2
         self.agent_DNA_length = dna_length
         self.maze = maze
         agents = []
@@ -110,7 +111,7 @@ class Population:
     # This method is called each time new children have been created
     def kill_the_weak(self):
         # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have higher scores)
-        ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
+        ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
         # Now we kill a portion of the population
         # Let's initialize an array to hold the survivors
         Fittest = []
@@ -119,6 +120,9 @@ class Population:
             Fittest.append(ordered_agents[agent])
         # Copy over the fittest agents into the new quiver 
         self.Agent_quiver = copy.deepcopy(Fittest)
+
+        # most likely comment this out later
+        return Fittest
 
 
     

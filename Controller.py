@@ -7,6 +7,7 @@ import pygame # import pygame library to display graphics
 import Agent  # import user defined agent class to represent maze navigating agents
 import Maze   # import user defined Maze class to represent the environment
 import Cross  # import user defined Population Class
+import copy
 
 # Define our maze colors
 BLACK = (0, 0, 0)          # Background color
@@ -122,7 +123,7 @@ draw_maze(test_population.maze)
 #########################################################
 
 
-# -------- Main Program Loop -----------
+# -------- Start of Main Program Loop -----------
 
 done = False     # The flag that allows the maze to loop until the user clicks the close button
 actionNumber = 0 # This is the DNA index for the agent to execute each loop
@@ -146,23 +147,55 @@ while not done:
     # Update the screen with what has been drawn
     pygame.display.update()
     
-# Display the fitness of each agent
+# --------  End of Main Program Loop -----------
+
+
+###################################
+### Fitness and Selection Tests ###
+###################################
+
+
+####### Display the fitness of each agent to console ########
 test_population.calculate_fitness()
 for x in range(test_population.pop_size):
     print(test_population.Agent_quiver[x].fitness_score)
 
 
-#test_population.selection()
 
-# Test of fitness calculations
-# Draw in a new color the fittest agents position
-top_percent = .20
+
+# ######## Highlight all the selected parents #######
+# # Select parents
+# selected = copy.deepcopy(test_population.selection())
+# color = BLUE
+# for x in range(len(selected) - 1):
+#     pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * test_population.Agent_quiver[selected[x]].current_position[0], maze_instance.CELL_SIZE * test_population.Agent_quiver[selected[x]].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
+# # Update the screen with what has been drawn
+# pygame.display.update()
+# pygame.time.delay(1000)
+
+
+######### Highlight the fittest x percentage of population ##################
+# top_percent = .20
+# color = BLUE
+# for x in range(test_population.pop_size - 1,int(round(test_population.pop_size * (1-top_percent))),-1):
+#     pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * test_population.Agent_quiver[x].current_position[0], maze_instance.CELL_SIZE * test_population.Agent_quiver[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
+# # Update the screen with what has been drawn
+# pygame.display.update()
+# pygame.time.delay(1000)
+
+
+######## Highlight all the agents that are selected to get eaten ###########
+fittest = test_population.kill_the_weak()
 color = BLUE
-for x in range(test_population.pop_size - 1,int(round(test_population.pop_size * (1-top_percent))),-1):
-    pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * test_population.Agent_quiver[x].current_position[0], maze_instance.CELL_SIZE * test_population.Agent_quiver[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
+for x in range(len(fittest)):
+    pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * fittest[x].current_position[0], maze_instance.CELL_SIZE * fittest[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
 # Update the screen with what has been drawn
 pygame.display.update()
 pygame.time.delay(1000)
+
+
+
+
 
 # Be IDLE friendly. If you forget this line, the program will 'hang' on exit.
 pygame.quit()
