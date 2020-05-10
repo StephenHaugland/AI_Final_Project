@@ -100,7 +100,7 @@ def move_population_once(pop):
 # create a maze object
 maze_instance = Maze.Maze()
 # Seed the first population to navigate the maze
-test_population = Cross.Population(25, maze_instance, 100) # pop_size = 25, maze = maze_instance, DNA_length = 100
+test_population = Cross.Population(1000, maze_instance, 200) # pop_size = 1000, maze = maze_instance, DNA_length = 200
 # setup pygame display
 pygame_setup(test_population.maze)
 # display the maze to the pygame window
@@ -191,7 +191,7 @@ for x in range(len(fittest)):
     pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * fittest[x].current_position[0], maze_instance.CELL_SIZE * fittest[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
 # Update the screen with what has been drawn
 pygame.display.update()
-pygame.time.delay(1000)
+pygame.time.delay(2000)
 
 
 
