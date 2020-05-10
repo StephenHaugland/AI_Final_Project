@@ -45,8 +45,14 @@ class Population:
     # Calculates the fitness for every agent in the population
     # Should be called after after each round of movement
     def calculate_fitness(self):
+        # Calculate fitness for each individual agent
         for x in range(len(self.Agent_quiver)):
             self.Agent_quiver[x].calculate_fitness(self.maze)
+        # Sort the agent quiver by fitness scores
+        self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
+
+    def get_fitness_stats(self):
+        pass
 
     # Move every agent in the population one step based on DNA index
     def move(self, DNA_index):
@@ -63,26 +69,23 @@ class Population:
         for x in range(len(self.Agent_quiver)):
              sum += self.Agent_quiver[x].fitness_score
 
-        # Begin by aligning the population of agents from the weakest to the fittest (Fitter agents have higher scores)
-        ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
-
         # Recursively generate boundaries between 0 and 1 that split up the number space into probabilites for each agent
         # This way each agent will have certain probability to reproduce with those who have a higher fitness getting a larger chance to mate
         selection_boundaries = [0]
         for i in range(len(self.Agent_quiver) - 1):
             # add the previous fitness proportion to the current fitness proportion to get a new boundary
-            selection_boundaries.append(selection_boundaries[i] + ((ordered_agents[i].fitness_score)/sum))
+            selection_boundaries.append(selection_boundaries[i] + ((self.Agent_quiver[i].fitness_score)/sum))
         selection_boundaries.append(1)
 
-        # Now we have n boundaries between 0 and 1 where n = the number of agents
-        # The number line between 0 and 1 is split into n different sections in between boundaries
+        # Now we have n boundaries (dividing lines) between 0 and 1 where n = the number of agents
+        # The number line between 0 and 1 is split into n different sections in between boundaries corresponding to the probability of selection
         # Now a random number is chosen between 0 and 1 to see which parents get selected
        
         # This holds the indices that point to selected parents from the original populations quiver
         parent_indices = []
         previously_selected_parent = None
         for x in range(self.pop_size):
-            # This random selection will occur n times
+            # This random selection will occur n times where n = population size
             r = random.random()
             # find the index of the parent that got randomly selected
             selected_parent_index = findClosest(selection_boundaries, len(selection_boundaries), r)
@@ -99,6 +102,7 @@ class Population:
                 parent_indices.append(selected_parent_index)
                 # update previous selection for next round
                 previously_selected_parent = copy.deepcopy(selected_parent_index)
+        # return a list of indices pointing to parents in Agent_quiver that should be sequentially iterated through to produce children
         return parent_indices
   
 
