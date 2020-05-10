@@ -61,14 +61,14 @@ class Agent:
         # Degrees updated based on unit circle orientation
         if dir == 'L':
             self.current_orientation += 90
-            print("I just turned left.")
+            # print("I just turned left.")
         elif dir == 'R':
             self.current_orientation -= 90
-            print("I just turned right.")
+            # print("I just turned right.")
         # if turned a full 360 degrees, reset to 0
         if self.current_orientation == 360 or self.current_orientation == -360:
             self.current_orientation = 0
-        print("I am now facing " + str(self.current_orientation)) 
+        # print("I am now facing " + str(self.current_orientation)) 
 
     # Calculates the next position if movement were to be carried out
     # action: an action derived from DNA i.e. L, F, or R
@@ -122,7 +122,7 @@ class Agent:
 
         # determine next position
         action = self.DNA[action_iterator]
-        print("I am about to move: " + action)
+        # print("I am about to move: " + action)
         next_position = self.calculate_next_pos(action)
 
         # If the next position is not blocked, move there
@@ -136,19 +136,12 @@ class Agent:
             self.previous_position = copy.deepcopy(self.current_position)
             self.current_position = copy.deepcopy(next_position)
 
-            print("After moving I am at position " + str(self.current_position))
-            # print on the maze where the agent is with an X
-            ## maze[self.current_position[1]][self.current_position[0]] = 'X'
+            # print("After moving I am at position " + str(self.current_position))
         # If the next position is occupied by an obstacle
         else:
-            print("Agent movement is blocked by a wall")
+            pass
+            # print("Agent movement is blocked by a wall")
 
-        # Once the agent has completed its last action, calculate fitness
-        # TODO move this to controller 
-    #-------------------------------------------------------------
-       # if (action_iterator == (self.DNA_length - 1)):
-       #     self.calculate_fitness(maze)
-    #-------------------------------------------------------------
 
         return changed_position
 
