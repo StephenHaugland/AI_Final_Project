@@ -90,7 +90,7 @@ def move_population_once(pop):
         actionNumber += 1
     else:
         done = True
-        print("This should only happen once at the end")
+        # print("This should only happen once at the end")
   
 
 
