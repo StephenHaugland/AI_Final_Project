@@ -170,8 +170,8 @@ class Population:
         # variable i will be tied to p1 and j will be tied to p2
         j = 1
         for i in range(0, len(selected_parents), 2):
-            # print("This iteration of the mating loop i is: " + str(i))
-            # print("This iteration of j is: " + str(j))
+            #print("This iteration of the mating loop i is: " + str(i))
+            #print("This iteration of j is: " + str(j))
             # Initialize a dynamic array that will hold the specific sequence of DNA
             # from p1 that will be passed to the child
             DNA_holder = []
@@ -250,12 +250,11 @@ class Population:
                 #if (x == self.Agent_quiver[j].DNA_length - 1):
                  #   print("The last index filled is " + str(x))
 
-            if (p1_DNA_start_index > 0):
-                y = 0
-                while(y < p1_DNA_start_index):
-                    #print("Front half filling")
-                    new_child_DNA.insert(y, self.Agent_quiver[selected_parents[j]].DNA[y])
-                    y += 1
+            y = 0
+            while(y < p1_DNA_start_index):
+                #print("Front half filling")
+                new_child_DNA.insert(y, self.Agent_quiver[selected_parents[j]].DNA[y])
+                y += 1
 
                 # Begin a loop to fill the latter indices of the child array from
                 # corresponding indices of p2 beginning 1 index past the p1 strand
@@ -404,16 +403,16 @@ def getClosest(val1, val2, index1, index2, target):
 
 # ------------------------ TEST AREA ------------------------------------------
 
-agent_holder_arr = []
-test_agent_pop = 50
-for x in range(test_agent_pop):
-    test_bot = Agent.Agent(Maze.Maze(), 500) 
-    agent_holder_arr.append(test_bot)
+# agent_holder_arr = []
+# test_agent_pop = 50
+# for x in range(test_agent_pop):
+#     test_bot = Agent.Agent(Maze.Maze(), 500) 
+#     agent_holder_arr.append(test_bot)
     
-Test_pop = Population(test_agent_pop, Maze.Maze(),500)
-Test_pop.Agent_quiver = agent_holder_arr
+# Test_pop = Population(test_agent_pop, Maze.Maze(),500)
+# Test_pop.Agent_quiver = agent_holder_arr
 
-Test_pop.crossover()
+# Test_pop.crossover()
 
     
 
