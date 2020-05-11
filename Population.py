@@ -167,25 +167,15 @@ class Population:
         # the parent array and creates a child.
         # variable i will be tied to p1 and j will be tied to p2
         j = 1
+        # Start at 0 and iterate through the agent quiver incrementing i twice every time
         for i in range(0, len(self.Agent_quiver), 2):
-            print("This iteration of the mating loop i is: " + str(i))
-            print("This iteration of j is: " + str(j))
             # Initialize a dynamic array that will hold the specific sequence of DNA
             # from p1 that will be passed to the child
             DNA_holder = []
 
             # Create a random integer from 50 to the size of an agent's DNA strand
             # We will pull a strand of DNA of this random size from p1
-            # TODO This current implementation allows a randomization of the length of 
-            # the DNA strand we're going to pull from p1 from 50 - full size of 
-            # an agent's DNA structure.  We may want to consider putting a limit on 
-            # how large of a strand is pulled from p1?  Having too large of a chunk of  
-            # p1's DNA may really limit p2's influence in the DNA of the children.  
-            # But my initial thoughts are that using randomly generated values during every             
-            # reproduction should generate enough variety that a few reproductions resulting 
-            # from p1-dominated genes shouldn't have too much of an effect on the overall generation
             p1_strand_length = random.randint(50, self.Agent_quiver[i].DNA_length)            
-            #print("This iteration the p1 strand length is " + str(p1_strand_length))
 
             # Create a random integer from 0 up to the size of p1's DNA genes 
             # that are not getting pulled to represent the index 
@@ -195,9 +185,9 @@ class Population:
             # structure, and the following variable will help us place that same 
             # DNA segment beginning at the same index in the child
             p1_DNA_start_index = random.randint(0, (self.Agent_quiver[i].DNA_length - p1_strand_length))
-            #print("This iteration the p1 start index is " + str(p1_DNA_start_index))
+            
             # We need to preserve this starting index despite needing to iterate across it
-            # in an upcoming loop, so we will establish a deep copy
+            # in an upcoming loop, so we establish a deep copy
             p1_DNA_start_index_deepCopy = copy.deepcopy(p1_DNA_start_index)
 
             # Next we create an array that will hold the DNA structure of this new child
@@ -208,81 +198,68 @@ class Population:
             while p1_DNA_start_index_deepCopy < (p1_strand_length + p1_DNA_start_index):
                 # Hold the DNA segment of p1. p1 is represented by Agent_quiver[i]
                 DNA_holder.append(self.Agent_quiver[i].DNA[p1_DNA_start_index_deepCopy])
+                # Pull the next gene and place it in the next DNA_holder index by incrementing the index counter
                 p1_DNA_start_index_deepCopy += 1
+
             # Now we need to begin building the child's DNA structure
             # We begin by adding to it the DNA strand from p1 that we've
             # just captured in DNA_holder beginning at the same index as p1
             
+            # Recalibrate the index iterating variable
             p1_DNA_start_index_deepCopy = copy.deepcopy(p1_DNA_start_index)
-            #TESTING: print("p1 variable: " + str(p1_DNA_start_index_deepCopy))
+    
+            # Declare a counter variable
             k = 0
             # Start a loop that runs as many iterations as the randomized
             # size of p1's DNA strand that we pulled
             while p1_DNA_start_index_deepCopy < (p1_DNA_start_index + p1_strand_length):
-                # Append to the child's DNA structure the strand from p1 
+                # Add to the child's DNA structure the strand from p1 by inserting it 
                 # starting at the same index that the strand began in p1 
                 new_child_DNA.insert(p1_DNA_start_index_deepCopy, DNA_holder[k])
+                # Increment your index iterator and counter variables
                 p1_DNA_start_index_deepCopy += 1
                 k += 1
             
-            #print("After loading new child DNA with p1 strip, it is this big: " + str(len(new_child_DNA)))
             # Now that the child has received the DNA it will take from p1, 
             # we need to fill in the remaining DNA elements with genes
             # from the DNA structure of p2
-            #print("Length of new child array" + str(len(new_child_DNA)))
             # If by chance the p1 strand fit perfectly at the end of the child's
             # DNA structure, then we need to start from the beginning filling
             # in the blanks.  Otherwise, we start at the first index past where
-            # the DNA from p1 ended.  So we begin by filtering out the rare case
-            # where the DNA strand from p1 fit at the very end of the child DNA structure
+            # the DNA from p1 ended.
+            # Declare x to represent the last index of the strand we pulled from p1  
             x = p1_DNA_start_index + p1_strand_length
-            #print("First index after end of strip = " + str(x))
-            # WHILE WE'RE INBETWEEN THE END OF THE P1 STRAND AND THE 500TH GENE
+            # Begin a loop filling in the new child DNA structure with corresponding genes
+            # from p2 starting at the index directly after the last index of the p1 strand
+            # and end the loop when you arrive at the final index in the new child sequence 
             while (x < self.Agent_quiver[i].DNA_length):
-                #print("Latter end filling")
                 # keep loading indices from p2 into the corresponding indices in the child DNA array
                 new_child_DNA.insert(x, self.Agent_quiver[j].DNA[x])
                 x += 1
-                #if (x == self.Agent_quiver[j].DNA_length - 1):
-                 #   print("The last index filled is " + str(x))
 
-            if (p1_DNA_start_index > 0):
-                y = 0
-                while(y < p1_DNA_start_index):
-                    #print("Front half filling")
-                    new_child_DNA.insert(y, self.Agent_quiver[j].DNA[y])
-                    y += 1
-
-                # Begin a loop to fill the latter indices of the child array from
-                # corresponding indices of p2 beginning 1 index past the p1 strand
-                #x = p1_DNA_start_index + p1_strand_length - 1
-                # While we haven't reached the end of p2's DNA structure
-                # TESTING: z = 1
-                #while x < self.Agent_quiver[j].DNA_length:
-                # TESTING: print("After filling up the latter indices, child DNA is this big: " + str(len(new_child_DNA)))
-                # Now that we've filled up the end of the child DNA structure,
-                # we come back around to the front end and fill each index up to
-                # the index that lands directly before the p1 strand begins
-
+            # Now that we've filled up the latter end of the new child DNA with corresponding
+            # genes from p2, we need to wrap around and fill in the front end of the DNA structure
+            # Declare a counter variable
+            y = 0
+            while(y < p1_DNA_start_index):
+                new_child_DNA.insert(y, self.Agent_quiver[j].DNA[y])
+                y += 1
 
             # Now we create a new child infusing them with the DNA resulting
             # from the above reproduction process
-            # TODO I need to confirm that this is the correct way to tie new agents to our maze
-            #new_child = Agent.Agent(new_child_DNA, Maze.Maze)
             new_child = Agent.Agent(self.maze, self.agent_DNA_length, new_child_DNA)
-
-            #print("You've made it past creating a new child")
 
             # The last part of the reproductive process is to introduce mutation
             # We want to only introduce mutation a small percentage of the time.
             # Also, we want the percentage of time that a child's genes get mutated 
             # to be highest in the beginning generations and decrease with successive generations.
-            # First we determine if this regeneration iteration is within the first
+
+            # We begin by capturing a random float between 0 and 1 which will be our probability
+            mutate_rate = random.random()
+            # Now we determine if this regeneration iteration is within the first
             # 10 generations.  If so, we'll mutate new children at a rate of 15%
             if self.global_gen_counter < 11:
-                # Randomly generate a float between 0 and 1
-                mutate_rate = random.random()
-                # If this randomly generated float is less than .15, that represents 
+                # If the randomly generated float is less than .15, that represents 
                 # a 15% chance of happening, so in this case we initiate mutation
                 if mutate_rate < .15:
                     # Mutate this child
@@ -290,19 +267,14 @@ class Population:
 
             # This elif loop will catch generations 10 - 20 and initiate mutation 10% of the time
             elif self.global_gen_counter > 10 and self.global_gen_counter < 21:
-                # Randomly generate a float between 0 and 1
-                mutate_rate = random.random()
                 # If this randomly generated float is less than .10, that represents 
                 # a 10% chance of happening, so in this case we initiate mutation
                 if mutate_rate < .10:
-                    print("This child got mutated")
                     # Mutate this child
                     new_child.mutate()
 
             # This else loop will catch all generations past 20 and initiate mutation 5% of the time
             else:
-                # Randomly generate a float between 0 and 1
-                mutate_rate = random.random()
                 # If this randomly generated float is less than .05, that represents 
                 # a 5% chance of happening, so in this case we initiate mutation
                 if mutate_rate < .05:
@@ -401,22 +373,16 @@ def getClosest(val1, val2, index1, index2, target):
 
 # ------------------------ TEST AREA ------------------------------------------
 
-# agent_holder_arr = []
-# test_agent_pop = 50
-# for x in range(test_agent_pop):
-#     #agent_holder_arr.append(Agent.Agent(Maze.maze()))
-#     #print(agent_holder_arr[x].DNA_length)
-#     #pass
-#     test_bot = Agent.Agent(Maze.Maze(), 500) 
-#     agent_holder_arr.append(test_bot)
+agent_holder_arr = []
+test_agent_pop = 50
+for x in range(test_agent_pop):
+    test_bot = Agent.Agent(Maze.Maze(), 500) 
+    agent_holder_arr.append(test_bot)
     
-# # added dna length argument to population constructor
-# Test_pop = Population(test_agent_pop, Maze.Maze(),500)
-# Test_pop.Agent_quiver = agent_holder_arr
+Test_pop = Population(test_agent_pop, Maze.Maze(),500)
+Test_pop.Agent_quiver = agent_holder_arr
 
-# Test_pop.crossover()
+Test_pop.crossover()
 
-
-#for x in range(test_agent_pop):
     
 
