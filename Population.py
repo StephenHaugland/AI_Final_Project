@@ -18,7 +18,7 @@ class Population:
     #### Class Attributes 
     #########################################
 
-    pop_size = 50             # The size of each generation of agents
+    pop_size = 100             # The size of each generation of agents
     Agent_quiver = [None]       # An array containing pop_size Agent objects
     number_of_survivors = pop_size // 2    # A constant value representing the top 20 agents of each generation
     global_gen_counter = 0      # A counter that tracks how many generations throughout the simulation
@@ -84,7 +84,8 @@ class Population:
         # Recursively generate boundaries between 0 and 1 that split up the number space into probabilites for each agent
         # This way each agent will have certain probability to reproduce with those who have a higher fitness getting a larger chance to mate
         selection_boundaries = [0]
-        for i in range(len(self.Agent_quiver) - 1):
+        ## -1
+        for i in range(len(self.Agent_quiver)):
             # add the previous fitness proportion to the current fitness proportion to get a new boundary
             selection_boundaries.append(selection_boundaries[i] + ((self.Agent_quiver[i].fitness_score)/sum))
         selection_boundaries.append(1)
@@ -136,7 +137,8 @@ class Population:
         #return Fittest
 
     def add_children(self, children):
-        for x in range(self.pop_size // 2):
+        #self.pop_size // 2
+        for x in range(len(children)):
             self.Agent_quiver.append(children[x])
 
     
