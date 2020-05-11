@@ -141,20 +141,21 @@ class Population:
     def  crossover(self):
         # We begin by killing the weakest half of the population
         #self.kill_the_weak()
-        #print(len(self.Agent_quiver))
+
         # Initialize an array to hold our new crossover generation of children
         new_pop = []
 
         # The self.kill_the_weak() funciton call provides us with the surviving
         # parents that we've selected and in an array in randomized order.
+        
         # Now we can start the reproductive process.  This will be a pretty detailed
         # for loop that will iterate through the shuffled parent list 
         # combining specific DNA segments and genes to create children.
         # Each iteration of the first nested loop combines 2 agents from 
         # the parent array and creates a child.
         # variable i will be tied to p1 and j will be tied to p2
-        for i in range(len(self.Agent_quiver)):
-            j = 1
+        j = 1
+        for i in range(0, len(self.Agent_quiver), 2):
             print("This iteration of the mating loop i is: " + str(i))
             print("This iteration of j is: " + str(j))
             # Initialize a dynamic array that will hold the specific sequence of DNA
@@ -171,8 +172,8 @@ class Population:
             # But my initial thoughts are that using randomly generated values during every             
             # reproduction should generate enough variety that a few reproductions resulting 
             # from p1-dominated genes shouldn't have too much of an effect on the overall generation
-            p1_strand_length = 316 #random.randint(50, self.Agent_quiver[i].DNA_length)            
-            print("This iteration the p1 strand length is " + str(p1_strand_length))
+            p1_strand_length = random.randint(50, self.Agent_quiver[i].DNA_length)            
+            #print("This iteration the p1 strand length is " + str(p1_strand_length))
 
             # Create a random integer from 0 up to the size of p1's DNA genes 
             # that are not getting pulled to represent the index 
@@ -181,8 +182,8 @@ class Population:
             # segment from p1 beginning at a random location in p1's DNA
             # structure, and the following variable will help us place that same 
             # DNA segment beginning at the same index in the child
-            p1_DNA_start_index = 110 #random.randint(0, (self.Agent_quiver[i].DNA_length - p1_strand_length))
-            print("This iteration the p1 start index is " + str(p1_DNA_start_index))
+            p1_DNA_start_index = random.randint(0, (self.Agent_quiver[i].DNA_length - p1_strand_length))
+            #print("This iteration the p1 start index is " + str(p1_DNA_start_index))
             # We need to preserve this starting index despite needing to iterate across it
             # in an upcoming loop, so we will establish a deep copy
             p1_DNA_start_index_deepCopy = copy.deepcopy(p1_DNA_start_index)
@@ -196,89 +197,69 @@ class Population:
                 # Hold the DNA segment of p1. p1 is represented by Agent_quiver[i]
                 DNA_holder.append(self.Agent_quiver[i].DNA[p1_DNA_start_index_deepCopy])
                 p1_DNA_start_index_deepCopy += 1
-                # TESTING: if (p1_DNA_start_index_deepCopy == (p1_strand_length + p1_DNA_start_index - 1)):
-                    # TESTING: print (p1_DNA_start_index_deepCopy)
-
             # Now we need to begin building the child's DNA structure
             # We begin by adding to it the DNA strand from p1 that we've
             # just captured in DNA_holder beginning at the same index as p1
             
             p1_DNA_start_index_deepCopy = copy.deepcopy(p1_DNA_start_index)
+            #TESTING: print("p1 variable: " + str(p1_DNA_start_index_deepCopy))
             k = 0
             # Start a loop that runs as many iterations as the randomized
             # size of p1's DNA strand that we pulled
             while p1_DNA_start_index_deepCopy < (p1_DNA_start_index + p1_strand_length):
-                # TESTING: print(k)
                 # Append to the child's DNA structure the strand from p1 
                 # starting at the same index that the strand began in p1 
                 new_child_DNA.insert(p1_DNA_start_index_deepCopy, DNA_holder[k])
-                #TESTING: print("new child DNA got an addition. It is now this big: " + str(len(new_child_DNA)))
                 p1_DNA_start_index_deepCopy += 1
                 k += 1
-                # TESTING: if k == p1_strand_length - 1:
-                    # TESTING: print("The p1 strand is this big: " + str(len(new_child_DNA)))
-
+            
+            #print("After loading new child DNA with p1 strip, it is this big: " + str(len(new_child_DNA)))
             # Now that the child has received the DNA it will take from p1, 
             # we need to fill in the remaining DNA elements with genes
             # from the DNA structure of p2
-
+            #print("Length of new child array" + str(len(new_child_DNA)))
             # If by chance the p1 strand fit perfectly at the end of the child's
             # DNA structure, then we need to start from the beginning filling
             # in the blanks.  Otherwise, we start at the first index past where
             # the DNA from p1 ended.  So we begin by filtering out the rare case
             # where the DNA strand from p1 fit at the very end of the child DNA structure
+            x = p1_DNA_start_index + p1_strand_length
+            #print("First index after end of strip = " + str(x))
+            # WHILE WE'RE INBETWEEN THE END OF THE P1 STRAND AND THE 500TH GENE
+            while (x < self.Agent_quiver[i].DNA_length):
+                #print("Latter end filling")
+                # keep loading indices from p2 into the corresponding indices in the child DNA array
+                new_child_DNA.insert(x, self.Agent_quiver[j].DNA[x])
+                x += 1
+                #if (x == self.Agent_quiver[j].DNA_length - 1):
+                 #   print("The last index filled is " + str(x))
 
+            if (p1_DNA_start_index > 0):
+                y = 0
+                while(y < p1_DNA_start_index):
+                    #print("Front half filling")
+                    new_child_DNA.insert(y, self.Agent_quiver[j].DNA[y])
+                    y += 1
 
-           
-
-
-            if (self.Agent_quiver[i].DNA_length - p1_DNA_start_index) != p1_strand_length:
                 # Begin a loop to fill the latter indices of the child array from
                 # corresponding indices of p2 beginning 1 index past the p1 strand
-                x = p1_DNA_start_index + p1_strand_length
+                #x = p1_DNA_start_index + p1_strand_length - 1
                 # While we haven't reached the end of p2's DNA structure
                 # TESTING: z = 1
-                while x < self.Agent_quiver[j].DNA_length:
-                    #print("x: " + str(x))
-                    # keep loading indices from p2 into the corresponding indices in the child DNA array
-                    new_child_DNA.insert(x, self.Agent_quiver[j].DNA[x])
-                    x += 1
-                    # TESTING: z += 1
-                    # TESTING: if (x == self.Agent_quiver[j].DNA_length - 1):
-                        #TESTING print("this loop ran this many times: " + str(z))
-
+                #while x < self.Agent_quiver[j].DNA_length:
                 # TESTING: print("After filling up the latter indices, child DNA is this big: " + str(len(new_child_DNA)))
                 # Now that we've filled up the end of the child DNA structure,
                 # we come back around to the front end and fill each index up to
                 # the index that lands directly before the p1 strand begins
 
-                
-
-                 # CURRENTLY FIGURING OUT INDEXING SITUATION ON THIS LOOP
-
-
-                y = 0
-                while y < p1_DNA_start_index:
-                    new_child_DNA[y] = self.Agent_quiver[j].DNA[y]
-                    y += 1
-                    if y == p1_DNA_start_index - 1:
-                        print("Now that we've filled the DNA array, it is this big: " + str(len(new_child_DNA)))
-                    
-
-            # This is the case where the p1 strand fits precisely at the end of the child array
-            else:
-                z = 0
-                while z < p1_strand_length:
-                    new_child_DNA.insert(p1_DNA_start_index, self.Agent_quiver[j].DNA[z])
-                    z += 1
-                    if z == p1_strand_length - 1:
-                        print("The final index of this array fill up is: " + str(z))
 
             # Now we create a new child infusing them with the DNA resulting
             # from the above reproduction process
             # TODO I need to confirm that this is the correct way to tie new agents to our maze
-            new_child = Agent.Agent(new_child_DNA, Maze.Maze)
-            #### new_child = Agent.Agent(new_child_DNA, self.maze)
+            #new_child = Agent.Agent(new_child_DNA, Maze.Maze)
+            new_child = Agent.Agent(self.maze, self.agent_DNA_length, new_child_DNA)
+
+            #print("You've made it past creating a new child")
 
             # The last part of the reproductive process is to introduce mutation
             # We want to only introduce mutation a small percentage of the time.
@@ -302,6 +283,7 @@ class Population:
                 # If this randomly generated float is less than .10, that represents 
                 # a 10% chance of happening, so in this case we initiate mutation
                 if mutate_rate < .10:
+                    print("This child got mutated")
                     # Mutate this child
                     new_child.mutate()
 
@@ -322,8 +304,7 @@ class Population:
             new_pop.append(new_child)
 
             # We need to increment our i and j variables an extra digit so that they jump 2 indices every loop
-            i += 1
-            j += 1
+            j += 2
 
         # Let's increment the generation counter before we return from this method
         self.global_gen_counter += 1

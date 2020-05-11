@@ -175,7 +175,7 @@ class Agent:
             mutation_sequence.append(self.DNA[(start_index + i)])
 
         # Now that we've captured the strand to be scrambled, we scramble it
-        mutation_sequence.scramble()
+        random.shuffle(mutation_sequence)
 
         # Now that the sequence has been scrambled, we can put it back
         k = 0
