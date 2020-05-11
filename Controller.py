@@ -221,24 +221,22 @@ for generation in range(10):
         test_population.calculate_fitness()
         test_population.get_fitness_stats()
 
-        ########################
-        ## Select Parents
-        ########################
-        test_population.selection()
-        ## highlight_parents(test_population)
+       
 
         ########################
-        ## Produce children through crossover and mutation
+        ## Select Parents and Produce children through crossover and mutation
         ########################
-
+        children = test_population.crossover()
+        
         ########################
         ## Kill the weak
         ########################
-        ##test_population.kill_the_weak()
+        test_population.kill_the_weak()
 
         #############################
         ## Reset for next generation
         #############################
+        test_population.add_children(children)
         reset_population(test_population)
     
 # --------  End of Main Program Loop -----------
