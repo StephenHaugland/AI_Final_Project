@@ -5,7 +5,6 @@
 
 # An import that I will probably only need to data testing
 import Maze
-
 import Agent        # Import user defined class that defines individual agents
 import random       # Import Python random library for generating random numbers
 import copy         # Import Python copy library for making deep copies
@@ -134,8 +133,11 @@ class Population:
         self.Agent_quiver = copy.deepcopy(Fittest)
 
         # most likely comment this out later
-        return Fittest
+        #return Fittest
 
+    def add_children(self, children):
+        for x in range(self.pop_size // 2):
+            self.Agent_quiver.append(children[x])
 
     
     # Function to define DNA crossover reproduction
@@ -150,9 +152,9 @@ class Population:
     # We then place that random strand at a random location within the child's DNA sequence.
     # At that point we begin filling in the rest of the child's DNA structure with 
     # p2's DNA
-    def  crossover(self):
+    def crossover(self):
         # We begin by killing the weakest half of the population
-        #self.kill_the_weak()
+        selected_parents = self.selection()
 
         # Initialize an array to hold our new crossover generation of children
         new_pop = []
@@ -167,15 +169,25 @@ class Population:
         # the parent array and creates a child.
         # variable i will be tied to p1 and j will be tied to p2
         j = 1
-        # Start at 0 and iterate through the agent quiver incrementing i twice every time
-        for i in range(0, len(self.Agent_quiver), 2):
+        for i in range(0, len(selected_parents), 2):
+            # print("This iteration of the mating loop i is: " + str(i))
+            # print("This iteration of j is: " + str(j))
             # Initialize a dynamic array that will hold the specific sequence of DNA
             # from p1 that will be passed to the child
             DNA_holder = []
 
             # Create a random integer from 50 to the size of an agent's DNA strand
             # We will pull a strand of DNA of this random size from p1
-            p1_strand_length = random.randint(50, self.Agent_quiver[i].DNA_length)            
+            # TODO This current implementation allows a randomization of the length of 
+            # the DNA strand we're going to pull from p1 from 50 - full size of 
+            # an agent's DNA structure.  We may want to consider putting a limit on 
+            # how large of a strand is pulled from p1?  Having too large of a chunk of  
+            # p1's DNA may really limit p2's influence in the DNA of the children.  
+            # But my initial thoughts are that using randomly generated values during every             
+            # reproduction should generate enough variety that a few reproductions resulting 
+            # from p1-dominated genes shouldn't have too much of an effect on the overall generation
+            p1_strand_length = random.randint(50, self.Agent_quiver[selected_parents[i]].DNA_length)            
+            #print("This iteration the p1 strand length is " + str(p1_strand_length))
 
             # Create a random integer from 0 up to the size of p1's DNA genes 
             # that are not getting pulled to represent the index 
@@ -184,8 +196,8 @@ class Population:
             # segment from p1 beginning at a random location in p1's DNA
             # structure, and the following variable will help us place that same 
             # DNA segment beginning at the same index in the child
-            p1_DNA_start_index = random.randint(0, (self.Agent_quiver[i].DNA_length - p1_strand_length))
-            
+            p1_DNA_start_index = random.randint(0, (self.Agent_quiver[selected_parents[i]].DNA_length - p1_strand_length))
+            #print("This iteration the p1 start index is " + str(p1_DNA_start_index))
             # We need to preserve this starting index despite needing to iterate across it
             # in an upcoming loop, so we establish a deep copy
             p1_DNA_start_index_deepCopy = copy.deepcopy(p1_DNA_start_index)
@@ -197,8 +209,7 @@ class Population:
             # beginning at the random index number catpured in p1_DNA_start_index
             while p1_DNA_start_index_deepCopy < (p1_strand_length + p1_DNA_start_index):
                 # Hold the DNA segment of p1. p1 is represented by Agent_quiver[i]
-                DNA_holder.append(self.Agent_quiver[i].DNA[p1_DNA_start_index_deepCopy])
-                # Pull the next gene and place it in the next DNA_holder index by incrementing the index counter
+                DNA_holder.append(self.Agent_quiver[selected_parents[i]].DNA[p1_DNA_start_index_deepCopy])
                 p1_DNA_start_index_deepCopy += 1
 
             # Now we need to begin building the child's DNA structure
@@ -229,13 +240,33 @@ class Population:
             # the DNA from p1 ended.
             # Declare x to represent the last index of the strand we pulled from p1  
             x = p1_DNA_start_index + p1_strand_length
-            # Begin a loop filling in the new child DNA structure with corresponding genes
-            # from p2 starting at the index directly after the last index of the p1 strand
-            # and end the loop when you arrive at the final index in the new child sequence 
-            while (x < self.Agent_quiver[i].DNA_length):
+            #print("First index after end of strip = " + str(x))
+            # WHILE WE'RE INBETWEEN THE END OF THE P1 STRAND AND THE 500TH GENE
+            while (x < self.Agent_quiver[selected_parents[i]].DNA_length):
+                #print("Latter end filling")
                 # keep loading indices from p2 into the corresponding indices in the child DNA array
-                new_child_DNA.insert(x, self.Agent_quiver[j].DNA[x])
+                new_child_DNA.insert(x, self.Agent_quiver[selected_parents[j]].DNA[x])
                 x += 1
+                #if (x == self.Agent_quiver[j].DNA_length - 1):
+                 #   print("The last index filled is " + str(x))
+
+            if (p1_DNA_start_index > 0):
+                y = 0
+                while(y < p1_DNA_start_index):
+                    #print("Front half filling")
+                    new_child_DNA.insert(y, self.Agent_quiver[selected_parents[j]].DNA[y])
+                    y += 1
+
+                # Begin a loop to fill the latter indices of the child array from
+                # corresponding indices of p2 beginning 1 index past the p1 strand
+                #x = p1_DNA_start_index + p1_strand_length - 1
+                # While we haven't reached the end of p2's DNA structure
+                # TESTING: z = 1
+                #while x < self.Agent_quiver[j].DNA_length:
+                # TESTING: print("After filling up the latter indices, child DNA is this big: " + str(len(new_child_DNA)))
+                # Now that we've filled up the end of the child DNA structure,
+                # we come back around to the front end and fill each index up to
+                # the index that lands directly before the p1 strand begins
 
             # Now that we've filled up the latter end of the new child DNA with corresponding
             # genes from p2, we need to wrap around and fill in the front end of the DNA structure
