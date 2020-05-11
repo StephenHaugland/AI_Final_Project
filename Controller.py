@@ -25,7 +25,7 @@ def pygame_setup(maze):
     pygame.init()
     # create a screen to draw the maze on
     global screen
-    screen = pygame.display.set_mode(maze.MAZE_SIZE)
+    screen = pygame.display.set_mode([maze.MAZE_SIZE[0], maze.MAZE_SIZE[1] + 100])
     # Set title of screen
     pygame.display.set_caption("Artificial Intelligence Final Project Spring 2020")
     # Declaration of a clock variable that utilizes a clock function
@@ -70,7 +70,7 @@ def draw_maze(maze):
 def move_population_once(pop):
     # Bool variable that gets SET if agent could move and changed positions
     Moved = False 
-    global actionNumber, done
+    global actionNumber, done_moving
     # Check if agents still have moves to execute
     if (actionNumber < pop.agent_DNA_length):
         # move every agent once
@@ -86,25 +86,85 @@ def move_population_once(pop):
                 #update the new position to white
                 color = WHITE
                 pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[x].current_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[x].current_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
+                # Update the screen with what has been drawn
+                pygame.display.update()
         # increment which DNA gene is firing, which action the agent is taking
         actionNumber += 1
     else:
-        done = True
+        done_moving = True
         # print("This should only happen once at the end")
+
+def reset_population(pop):
+
+    # Draw over all agents with black, clean the board
+    for x in range(pop.pop_size):
+        # change the previous position to black
+        color = BLACK
+        pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[x].current_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[x].current_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
+    
+    # Reset all the agents positions to the start of the maze
+    pop.reset()
+
+    # Draw all of the agents at the start
+    for y in range(pop.pop_size):
+        # update the new position to white
+        color = WHITE
+        pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[y].current_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[y].current_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
+    # update what we've drawn
+    pygame.display.update()
+    pygame.time.delay(250)
   
+######### Highlight all the agents that are selected to get eaten ###########
+def highlight_weak(pop):
+    fittest = pop.kill_the_weak()
+    color = RED
+    for x in range(len(fittest)):
+        pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * fittest[x].current_position[0], maze_instance.CELL_SIZE * fittest[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
+    # Update the screen with what has been drawn
+    pygame.display.update()
+    pygame.time.delay(3000)
 
-
-
+######## Highlight all the selected parents #######
+def highlight_parents(pop):
+    # Select parents
+    selected = copy.deepcopy(pop.selection())
+    color = BLUE
+    for x in range(len(selected) - 1):
+        pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * pop.Agent_quiver[selected[x]].current_position[0], maze_instance.CELL_SIZE * pop.Agent_quiver[selected[x]].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
+    # Update the screen with what has been drawn
+    pygame.display.update()
+    pygame.time.delay(3000)
 
 
 # create a maze object
 maze_instance = Maze.Maze()
 # Seed the first population to navigate the maze
-test_population = Cross.Population(1000, maze_instance, 200) # pop_size = 1000, maze = maze_instance, DNA_length = 200
+test_population = Cross.Population(100, maze_instance, 150) # (pop_size, maze, DNA_length)
 # setup pygame display
 pygame_setup(test_population.maze)
 # display the maze to the pygame window
 draw_maze(test_population.maze)
+
+
+# create a font object. 
+# 1st parameter is the font file 
+# which is present in pygame. 
+# 2nd parameter is size of the font 
+font = pygame.font.Font('freesansbold.ttf', 32) 
+# create a text suface object, 
+# on which text is drawn on it. 
+text = font.render('Average Fitness: 0 Top fitness: 0', True, RED, BLUE) 
+# create a rectangular object for the 
+# text surface object 
+textRect = text.get_rect()  
+# set the center of the rectangular object. 
+textRect.center = ((maze_instance.MAZE_SIZE[1] // 2) + 55 , (maze_instance.MAZE_SIZE[0] // 2) + 80) 
+# copying the text surface object 
+# to the display surface object  
+# at the center coordinate. 
+screen.blit(text, textRect) 
+
+
 
 
 # TODO I think this might be where we will add code to allow the user to choose 
@@ -120,32 +180,66 @@ draw_maze(test_population.maze)
 # 5:    population.select_parents()
 # 6:    population.crossover&mutate()
 # 7:    population.kill_the_weak()
+# 8:    population.reset()
 #########################################################
 
 
 # -------- Start of Main Program Loop -----------
 
-done = False     # The flag that allows the maze to loop until the user clicks the close button
+done_moving = False     # The flag that allows the maze to loop until the user clicks the close button
 actionNumber = 0 # This is the DNA index for the agent to execute each loop
-FPS = 40         # defines game loop frames per second; lower numbers can be used to more closely observe agent movement
+FPS = 100         # defines game loop frames per second; lower numbers can be used to more closely observe agent movement
+exited = False
 
-while not done:
-    # Defines how many frames per second the simulation runs at
-    clock.tick(FPS) # should be called once per frame
+for generation in range(10):
+    while ((not exited) and (not done_moving)):
+        # Defines how many frames per second the simulation runs at
+        clock.tick(FPS) # should be called once per frame
+        # Checks if exit is clicked on
+        for event in pygame.event.get():  
+            # First, if the user clicks the close button, we need to close the window down
+            if event.type == pygame.QUIT:
+                # by changing the loop flag to True
+                exited = True
 
-    # Checks if exit is clicked on
-    for event in pygame.event.get():  
-        # First, if the user clicks the close button, we need to close the window down
-        if event.type == pygame.QUIT:
-            # by changing the loop flag to True
-            done = True
+        #####################
+        # Population movement
+        #####################
+        
+        # move the entire populatio one step forward
+        move_population_once(test_population)
+        
+    # Only continue with program, if window has not been exited
+    if not exited:
+        # RESET variables so next generation can spawn in
+        done_moving = False
+        actionNumber = 0
+        
+        ########################
+        ## Calculate Fitess
+        ########################
+        test_population.calculate_fitness()
+        test_population.get_fitness_stats()
 
-    ################
-    # Agent movement
-    ################
-    move_population_once(test_population)
-    # Update the screen with what has been drawn
-    pygame.display.update()
+        ########################
+        ## Select Parents
+        ########################
+        test_population.selection()
+        ## highlight_parents(test_population)
+
+        ########################
+        ## Produce children through crossover and mutation
+        ########################
+
+        ########################
+        ## Kill the weak
+        ########################
+        ##test_population.kill_the_weak()
+
+        #############################
+        ## Reset for next generation
+        #############################
+        reset_population(test_population)
     
 # --------  End of Main Program Loop -----------
 
@@ -155,23 +249,19 @@ while not done:
 ###################################
 
 
+
+
 ####### Display the fitness of each agent to console ########
-test_population.calculate_fitness()
-for x in range(test_population.pop_size):
-    print(test_population.Agent_quiver[x].fitness_score)
+# for x in range(test_population.pop_size):
+#     print(test_population.Agent_quiver[x].fitness_score)
+
+# Print the top and average fitness scores
+# test_population.get_fitness_stats()
 
 
 
 
-# ######## Highlight all the selected parents #######
-# # Select parents
-# selected = copy.deepcopy(test_population.selection())
-# color = BLUE
-# for x in range(len(selected) - 1):
-#     pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * test_population.Agent_quiver[selected[x]].current_position[0], maze_instance.CELL_SIZE * test_population.Agent_quiver[selected[x]].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
-# # Update the screen with what has been drawn
-# pygame.display.update()
-# pygame.time.delay(1000)
+# highlight_parents(test_population)
 
 
 ######### Highlight the fittest x percentage of population ##################
@@ -181,17 +271,10 @@ for x in range(test_population.pop_size):
 #     pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * test_population.Agent_quiver[x].current_position[0], maze_instance.CELL_SIZE * test_population.Agent_quiver[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
 # # Update the screen with what has been drawn
 # pygame.display.update()
-# pygame.time.delay(1000)
+# pygame.time.delay(5000)
 
 
-######## Highlight all the agents that are selected to get eaten ###########
-fittest = test_population.kill_the_weak()
-color = BLUE
-for x in range(len(fittest)):
-    pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * fittest[x].current_position[0], maze_instance.CELL_SIZE * fittest[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
-# Update the screen with what has been drawn
-pygame.display.update()
-pygame.time.delay(2000)
+
 
 
 
