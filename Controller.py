@@ -139,7 +139,7 @@ def highlight_parents(pop):
 # create a maze object
 maze_instance = Maze.Maze()
 # Seed the first population to navigate the maze
-test_population = Population.Population(100, maze_instance, 100) # (pop_size, maze, DNA_length)
+test_population = Population.Population(100, maze_instance, 200) # (pop_size, maze, DNA_length)
 # setup pygame display
 pygame_setup(test_population.maze)
 # display the maze to the pygame window
@@ -188,10 +188,10 @@ screen.blit(text, textRect)
 
 done_moving = False     # The flag that allows the maze to loop until the user clicks the close button
 actionNumber = 0 # This is the DNA index for the agent to execute each loop
-FPS = 100         # defines game loop frames per second; lower numbers can be used to more closely observe agent movement
+FPS = 250         # defines game loop frames per second; lower numbers can be used to more closely observe agent movement
 exited = False
 
-for generation in range(10):
+for generation in range(50):
     while ((not exited) and (not done_moving)):
         # Defines how many frames per second the simulation runs at
         clock.tick(FPS) # should be called once per frame
