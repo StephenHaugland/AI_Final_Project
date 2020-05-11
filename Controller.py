@@ -6,7 +6,7 @@
 import pygame # import pygame library to display graphics
 import Agent  # import user defined agent class to represent maze navigating agents
 import Maze   # import user defined Maze class to represent the environment
-import Cross  # import user defined Population Class
+import Population  # import user defined Population Class
 import copy
 
 # Define our maze colors
@@ -139,7 +139,7 @@ def highlight_parents(pop):
 # create a maze object
 maze_instance = Maze.Maze()
 # Seed the first population to navigate the maze
-test_population = Cross.Population(100, maze_instance, 150) # (pop_size, maze, DNA_length)
+test_population = Population.Population(100, maze_instance, 150) # (pop_size, maze, DNA_length)
 # setup pygame display
 pygame_setup(test_population.maze)
 # display the maze to the pygame window
