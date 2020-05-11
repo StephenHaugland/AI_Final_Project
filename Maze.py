@@ -10,6 +10,8 @@ class Maze:
     MAZE_EXIT = [70, 20]
     MAZE_START = [2, 20]
 
+    MAZE_START_ORIENTATION = 0
+
     # This sets the WIDTH and HEIGHT of each grid square
     CELL_SIZE = 10
 

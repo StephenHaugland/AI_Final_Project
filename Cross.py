@@ -52,8 +52,20 @@ class Population:
         # Sort the agent quiver by fitness scores
         self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
 
+    # print to console the top and average fitness score to monitor evolution progress
     def get_fitness_stats(self):
-        pass
+        sum = 0
+        for x in range(self.pop_size):
+            sum += self.Agent_quiver[x].fitness_score
+        avg = sum // self.pop_size
+        print('Top fitness score: {}\nAverage fitness score: {}' .format(self.Agent_quiver[self.pop_size - 1].fitness_score, avg))
+
+    # Once an population has completed a round of movement, reset them to the beginning of the maze
+    def reset(self):
+        for x in range(self.pop_size):
+            self.Agent_quiver[x].current_position = self.maze.MAZE_START
+            self.Agent_quiver[x].current_orientation = self.maze.MAZE_START_ORIENTATION
+            self.Agent_quiver[x].fitness_score = 0
 
     # Move every agent in the population one step based on DNA index
     def move(self, DNA_index):
@@ -408,20 +420,20 @@ def getClosest(val1, val2, index1, index2, target):
 
 # ------------------------ TEST AREA ------------------------------------------
 
-agent_holder_arr = []
-test_agent_pop = 50
-for x in range(test_agent_pop):
-    #agent_holder_arr.append(Agent.Agent(Maze.maze()))
-    #print(agent_holder_arr[x].DNA_length)
-    #pass
-    test_bot = Agent.Agent(Maze.Maze(), 500) 
-    agent_holder_arr.append(test_bot)
+# agent_holder_arr = []
+# test_agent_pop = 50
+# for x in range(test_agent_pop):
+#     #agent_holder_arr.append(Agent.Agent(Maze.maze()))
+#     #print(agent_holder_arr[x].DNA_length)
+#     #pass
+#     test_bot = Agent.Agent(Maze.Maze(), 500) 
+#     agent_holder_arr.append(test_bot)
     
-# added dna length argument to population constructor
-Test_pop = Population(test_agent_pop, Maze.Maze(),500)
-Test_pop.Agent_quiver = agent_holder_arr
+# # added dna length argument to population constructor
+# Test_pop = Population(test_agent_pop, Maze.Maze(),500)
+# Test_pop.Agent_quiver = agent_holder_arr
 
-Test_pop.crossover()
+# Test_pop.crossover()
 
 
 #for x in range(test_agent_pop):
