@@ -1,6 +1,6 @@
 # Stephen Haugland and Shane Snediker
 # Artificial Intelligence Spring 2020
-# This file contains the 2 dimensional array holding our maze data 
+# This file contains the 2 dimensional array holding maze data 
 
 
 import pygame
