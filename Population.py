@@ -84,8 +84,8 @@ class Population:
         # Recursively generate boundaries between 0 and 1 that split up the number space into probabilites for each agent
         # This way each agent will have certain probability to reproduce with those who have a higher fitness getting a larger chance to mate
         selection_boundaries = [0]
-        ## -1
-        for i in range(len(self.Agent_quiver)):
+        ## -1 is for the last element whose total rounds to 1 which is added after the loop is completed
+        for i in range(len(self.Agent_quiver) - 1):
             # add the previous fitness proportion to the current fitness proportion to get a new boundary
             selection_boundaries.append(selection_boundaries[i] + ((self.Agent_quiver[i].fitness_score)/sum))
         selection_boundaries.append(1)
@@ -97,7 +97,8 @@ class Population:
         # This holds the indices that point to selected parents from the original populations quiver
         parent_indices = []
         previously_selected_parent = None
-        for x in range(self.pop_size):
+        x = 0
+        while x < self.pop_size:
             # This random selection will occur n times where n = population size
             r = random.random()
             # find the index of the parent that got randomly selected
@@ -115,7 +116,9 @@ class Population:
                 parent_indices.append(selected_parent_index)
                 # update previous selection for next round
                 previously_selected_parent = copy.deepcopy(selected_parent_index)
+            x += 1
         # return a list of indices pointing to parents in Agent_quiver that should be sequentially iterated through to produce children
+        print(len(parent_indices))
         return parent_indices
   
 
