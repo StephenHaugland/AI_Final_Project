@@ -1,9 +1,8 @@
 # Stephen Haugland and Shane Snediker
 # Artificial Intelligence Spring 2020
-# This file contains the maze class
+# This file contains the maze class which contains the graphical maze data
 
-import pygame
-
+# Maze class
 class Maze:
     
     # Special grid locations

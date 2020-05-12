@@ -1,6 +1,17 @@
 # Stephen Haugland and Shane Snediker
 # Artificial Intelligence Spring 2020
-# This file contains the 2 dimensional array holding maze data 
+# This file contains the 2 dimensional array holding maze data
+# 
+# ------------------------------------------------------------
+# This file contains some of our initial maze definition.  We 
+# have since moved and reorganized this code into Maze.py and 
+# Controller.py
+# This file contains the grid information that allowed us to 
+# capture the locations of our maze obstacles in a two
+# dimensional array.
+# ------------------------------------------------------------
+# 
+# Last updated: May 12th, 2020 
 
 
 import pygame

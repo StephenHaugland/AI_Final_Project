@@ -1,26 +1,24 @@
 # Stephen Haugland and Shane Snediker
 # Artificial Intelligence Spring 2020
-# This file contains the agent class 
+# This file contains the agent class defining the little bots that will navigate the maze 
 
-import random # Used for randomly seeding DNA
-import copy # Used to create deep copy of variables
+import random   # Used for randomly seeding DNA
+import copy     # Used to create deep copy of variables
 
-
-# agent class
-# This class contains all data pertaining to the agents that will be navigating our maze
+# Agent class
+# This class contains all data pertaining to the individual agents that will be navigating our maze
 class Agent:
 
     #########################################
     #### Class Attributes 
     #########################################
 
-    current_orientation = 0 # Specifies which direction the agent is facing, utilizes unit circle degrees
-    previous_position = [1,20] # Store the agent's previous position to repaint black on the screen
-    current_position = [1,20] # Start each agent at the starting point of the maze
-    DNA_length = 500 # Allow for dynamic DNA length to be easily changed
-    
-    fitness_score = 0 # Stores the agents fitness score computed after final movement has been made, LOWER score is better!
-    DNA_mutate_strand = (DNA_length // 10) # A holder variable that captures an integer value representing 10 percept of an agent's DNA
+    current_orientation = 0     # Specifies which direction the agent is facing, utilizing unit circle degrees
+    previous_position = [1,20]  # Store the agent's previous position to repaint black on the screen
+    current_position = [1,20]   # Variable holding the agent's current position, which will begin at the maze entrance
+    DNA_length = 500            # Variable representing the length of an agent's DNA structure
+    fitness_score = 0           # Stores the agents overall fitness score computed after the final movement
+    DNA_mutate_strand = (DNA_length // 10) # A holder variable that captures an integer value representing 10 percent of an agent's DNA
 
     #########################################
     #### Class Methods 
@@ -28,16 +26,21 @@ class Agent:
 
     # Agent constructor includes two implementations of agents
     # One for the first generation, and one for subsequent generations
+    # Parameters:  maze: a maze object that this agent will be connected to
+    #              dna_length: an integer representing this agent's DNA sequence lengt
+    #              DNA_array: a list of string values representing this agent's genes
     def __init__(self, maze, dna_length, DNA_array = None):
         # Overloading constructors in Python involves handling all possible
         # instances of the constructor within 1 method
         # We begin by establishing 2 variables that every agent will have
-        # An integeger variable holding the length of their DNA structure
+        # An integer variable holding the length of their DNA structure
         self.DNA_length = dna_length
         # And a DNA array to hold their DNA sequence (which is really a list of actions that the agent will take)
         self.DNA = [] 
-        # So, now we start with the first implementation: the case where we are
+        # Now we start with the first implementation: the case where we are
         # initializing the seed population by giving them a random DNA sequence
+        # This is the implementation that is used because when calling the constructor 
+        # you do not include the DNA-array parameter
         if DNA_array == None:
             # generate 50 random actions/movements to seed the first generation
             for _ in range(self.DNA_length):
@@ -55,28 +58,30 @@ class Agent:
             self.current_position = copy.deepcopy(maze.MAZE_START)
             self.previous_position = copy.deepcopy(maze.MAZE_START)
 
-    # update the agents orientation according to which direction it turns
-    # dir: direction agent moves
+    # Update the agent's orientation according to which direction it turns
+    # Parameters:  dir: A char containing one of 3 directions ('L' for left, 'R' for right, or 'F' for straight forward)
     def turn(self,dir):
         # Degrees updated based on unit circle orientation
+
+        # If this turn is left, then we need to add 90 degrees to the agent's current orientation
         if dir == 'L':
             self.current_orientation += 90
-            # print("I just turned left.")
+        # If this turn is right, then we need to subtract 90 degrees from the agent's current orientation    
         elif dir == 'R':
             self.current_orientation -= 90
-            # print("I just turned right.")
-        # if turned a full 360 degrees, reset to 0
+        # If the agent turned a full 360 degrees, reset to 0
         if self.current_orientation == 360 or self.current_orientation == -360:
-            self.current_orientation = 0
-        # print("I am now facing " + str(self.current_orientation)) 
+            self.current_orientation = 0 
 
     # Calculates the next position if movement were to be carried out
-    # action: an action derived from DNA i.e. L, F, or R
+    # Parameter:  action: A char representing the agent's next positional movement
+    # Return:     next_pos: A 2 dimensional list containing the next maze location where the agent will move
     def calculate_next_pos(self, action):
-        # calculate the next position
-        # TODO: Find out how to copy variable contents, this is where bug occurs
+        # Begin by setting next position variable equal to the agent's current position
+        # next_pos is a 2 dimensional array with the first dimension tracking the x direction and the second dimension tracking the y direction
+        # So next_pos[0] adjustments move agent left and right, while next_pos[1] adjustments move agent up and down
         next_pos = copy.deepcopy(self.current_position)
-        # If facing up/north
+        # If the agent is currently facing up/north, determine where to turn him depending on the next positional movement
         if self.current_orientation == 90 or self.current_orientation == -270:
             if action == 'F':
                 next_pos[1] -= 1
@@ -84,7 +89,7 @@ class Agent:
                 next_pos[0] -= 1
             elif action == 'R':
                 next_pos[0] += 1
-        # If facing down/south
+        # If the agent is currently facing down/south, determine where to turn him depending on the next positional movement
         elif self.current_orientation == 270 or self.current_orientation == -90:
             if action == 'F':
                 next_pos[1] += 1
@@ -92,7 +97,7 @@ class Agent:
                 next_pos[0] += 1
             elif action == 'R':
                 next_pos[0] -= 1
-        # If facing right/east
+        # If the agent is currently facing right/east, determine where to turn him depending on the next positional movement
         elif self.current_orientation == 0 or self.current_orientation == -360 or self.current_orientation == 360:
             if action == 'F':
                 next_pos[0] += 1
@@ -100,7 +105,7 @@ class Agent:
                 next_pos[1] -= 1
             elif action == 'R':
                 next_pos[1] += 1
-        # If facing left/west
+        # If the agent is currently facing left/west, determine where to turn him depending on the next positional movement
         elif self.current_orientation == 180 or self.current_orientation == -180:
             if action == 'F':
                 next_pos[0] -= 1
@@ -114,35 +119,29 @@ class Agent:
 
         return next_pos
 
-    # function that moves the agent to its next position if a wall is not present
-    # maze: 2D array agent is navigation through
-    # action_iterator: integer expressing index of current genome/action being expressed from DNA
+    # Function that moves the agent to its next position if a wall is not present
+    # Parameters: action_iterator: An integer to iterate through the agent's DNA structure
+    #             maze: 2D maze array that the agent is navigating
+    # Return:     changed_position: the next maze location where the agent will step to
     def move(self, action_iterator, maze):
+        # Establish a boolean flag that will help us track whether or not the agent has changed position
         changed_position = False
-
-        # determine next position
+        # Determine next position by capturing the next gene representing a directional movement
         action = self.DNA[action_iterator]
-        # print("I am about to move: " + action)
+        # Calculate the next position of this agent based on the DNA instruction
         next_position = self.calculate_next_pos(action)
-
         # If the next position is not blocked, move there
+        # Check to see if the next grid location contains an obstacle
         if maze.MAZE_GRID[next_position[1]][next_position[0]] == 0:
-            # Set the flag that the agent has moved
+            # Set the flag to represent the agent's movement
             changed_position = True
-            # change previously held position back to a zero
-            ## maze[self.current_position[1]][self.current_position[0]] = 0
-
-            # since movement has occured, change previous position to current and update current to next
+            # since movement has occured, change previous position to current and update current to the next position
             self.previous_position = copy.deepcopy(self.current_position)
             self.current_position = copy.deepcopy(next_position)
-
-            # print("After moving I am at position " + str(self.current_position))
-        # If the next position is occupied by an obstacle
+        # However, if the next position is occupied by an obstacle the agent can't move
         else:
             pass
-            # print("Agent movement is blocked by a wall")
-
-
+        # Return the flag status of this movement
         return changed_position
 
     # Function that gives definition to an agent's DNA mutation
@@ -152,6 +151,8 @@ class Agent:
     # that strand and then put the scrambled strand back in place.
     # Our current predetermined DNA mutation strand percentage 
     # (represented by DNA_mutate_strand) is 10%
+    # No parameters
+    # Return: self: the mutated agent
     def mutate(self):
         # We need to find a random starting index within this agent's DNA strand to begin the mutation
         # We declare a variable that captures a random integer.  This random integer has to be 
@@ -187,62 +188,62 @@ class Agent:
 
         # return the mutated agent
         return self
-            
+
+    #-------- ADDING A NEW POTENTIAL VARIATION ON OUR CURRENT MUTATION IMPLEMENTATION-----------------------------------
+
+
+
+    # Function that gives definition to an agent's DNA mutation
+    # In this implementation, we use a new DNA sequence version 
+    # of DNA mutation where we take a DNA strand that is a 
+    # predetermined percentage of an agent's total DNA size and 
+    # we remove it, replacing it with a new random sequence of DNA.
+    # Our current predetermined DNA mutation strand percentage 
+    # (represented by DNA_mutate_strand) is 10%
+    # No parameters
+    # Return: self: the mutated agent
+    def mutate(self):
+        # We need to find a random starting index within this agent's DNA strand to begin the mutation
+        # We declare a variable that captures a random integer.  This random integer has to be 
+        # less than the difference between the length of the agent's DNA strand and the length
+        # of the mutating strand so that we can mutate from any random index within the DNA sequence
+        start_index = random.randint(0, (len(self.DNA) - self.DNA_mutate_strand))
+        
+        # Initialize an array that will hold the new DNA mutation sequence
+        mutation_sequence = []
+
+        # First let's create a brand new random sequence of DNA instructions of size DNA_mutate_strand
+        for _ in range(self.DNA_mutate_strand):
+            mutation_sequence.append(random.choice(['L', 'F', 'R']))
+
+        # Now we replace the mutation strand of the agent with the new mutated values
+        # We need our iterator to start at zero on account of array indices beginning at zero
+        i = 0
+        # Initialize a loop that will iterate once for every gene in the mutation strand
+        for i in range(self.DNA_mutate_strand - 1):
+            # Replace the current gene value with the new mutated value
+            self.DNA[(start_index + i)] = mutation_sequence[i]
+
+        # return the mutated agent
+        return self
+
+
+
+    # -------------------- END OF ALTERNATIVE MUTATION IMPLENTATION
 
     # Test function to display DNA
     def print_DNA(self):
         print(self.DNA)
 
-
-    # TODO crossover constructor
-    # constructor used in crossover
-    #def __init__(self, mom, dad):
-    # figure out algorithm to combine two agents DNA
-    # maze: 2D array agent is navigating through
+    # Function that calculates an agent's fitness at the conclusion of a generation of maze navigating
+    # Parameters:  maze: 2D array that the agent is navigating
     def calculate_fitness(self, maze):
         # calculate distance from final agent position to maze exit
         # d = sqrt((mazeX - agentX)^2 + (mazeY-agentY)^2)
         # save operation complexity by not square rooting
-
-        # TODO We're catching an exception with our distance function in this next line of code.  Something about 
-        # an array not having an argument equivalent to maze.MAZE_EXIT
-
         distance = (abs(maze.MAZE_EXIT[1] - self.current_position[1])) + (abs(maze.MAZE_EXIT[0] - self.current_position[0]))
         # arbitrary number chosen to subtract distance from to make fitter agents have higher scores
         score = 100 - distance
-        self.fitness_score = score
-    
-
-
-
-# Testing movement and object collision detection
-# Ricky = Agent()
-# Ricky.print_DNA()
-
-
-# note about 2D arrays
-# elements can be accessed according to the following:
-# The first index is the row or Y coordinate and the second index is the column or X coordinate
-# Ex: maze1[y][x] or maze1[row][column]
-
-# maze1 = [[1, 1, 1, 1],
-#         [1, 0, 0, 1],
-#         [1, 0, 0, 1],
-#         [1, 0, 0, 1],
-#         [1, 1, 1, 1]]
-
-
-# Test loop to see how collision works
-# for x in range(50):
-#     Ricky.move(x,maze1)
-#     print(maze1[0])
-#     print(maze1[1])
-#     print(maze1[2])
-#     print(maze1[3])
-#     print(maze1[4])
-
-# print("Ricky's fitness score was: " + str(Ricky.fitness_score))
-
-    
+        self.fitness_score = score   
 
 
