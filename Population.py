@@ -1,10 +1,9 @@
 # Stephen Haugland and Shane Snediker
 # Artificial Intelligence Spring 2020
 # This file creates a population of agents 
-# and defines the DNA crossover of successive populations as well as mutations
+# and defines the DNA crossover of successive populations, which initiates mutations 
 
-# An import that I will probably only need to data testing
-import Maze
+import Maze         # Import user defined class that provides graphical maze data
 import Agent        # Import user defined class that defines individual agents
 import random       # Import Python random library for generating random numbers
 import copy         # Import Python copy library for making deep copies
@@ -18,73 +17,90 @@ class Population:
     #### Class Attributes 
     #########################################
 
-    pop_size = 100             # The size of each generation of agents
-    Agent_quiver = [None]       # An array containing pop_size Agent objects
-    number_of_survivors = pop_size // 2    # A constant value representing the top 20 agents of each generation
+    pop_size = None             # The size of each generation of agents
+    Agent_quiver = [None]       # An array eventually containing pop_size Agent objects
+    number_of_survivors = None  # A constant value representing the fittest agents
     global_gen_counter = 0      # A counter that tracks how many generations throughout the simulation
     agent_DNA_length = None     # Store how long the agents DNA strands are
-    # Should we include a maze that the population is bound to for ease of access?
-    maze = Maze.Maze()
+    maze = Maze.Maze()          # Maze object that the population is bound to
+    average_fitness = None      # Double data type representing a generation's average fitness score
+    top_score = None            # Integer representing this generation's top score
 
     #########################################
     #### Class Methods 
     #########################################
 
     # Population constructor to initiate a population of agents to traverse the maze
+    # Parameters:  size: An integer value representing the amount of agents in this population
+    #              maze: A maze object representing the maze that this population will traverse
+    #              dna_length: An integer value representing the amount of genes each agent in the population has
     def __init__(self, size, maze, dna_length):
-        self.pop_size = size
-        self.number_of_survivors = size // 2
-        self.agent_DNA_length = dna_length
-        self.maze = maze
+        # Give this population's member variables their values based on the population you're instantiating
+        self.pop_size = size                    # Amount of agents in this population
+        self.number_of_survivors = size // 2    # An integer value representing half of the population
+        self.agent_DNA_length = dna_length      # The length of each agent's DNA sequence
+        self.maze = maze                        # Connect this population to the maze
+        # Create a list to hold each of the agent objects for this population
         agents = []
+        # Fill up the agent list with agents
         for _ in range(size):
             Agent007 = copy.deepcopy(Agent.Agent(self.maze, dna_length))
             agents.append(Agent007)
+        # Save the list of agents just created as a quiver of agents for this population member variable
         self.Agent_quiver = agents
 
-    # Calculates the fitness for every agent in the population
+    # Function that calculates the fitness for every agent in the population
     # Should be called after after each round of movement
     def calculate_fitness(self):
         # Calculate fitness for each individual agent
         for x in range(len(self.Agent_quiver)):
             self.Agent_quiver[x].calculate_fitness(self.maze)
-        # Sort the agent quiver by fitness scores
+        # Sort the agent quiver by fitness scores from lowest at early indices to highest at latter indices
         self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
 
-    # print to console the top and average fitness score to monitor evolution progress
+    # Function for printing to console the top and average fitness score to monitor evolution progress
     def get_fitness_stats(self):
+        # Begin by adding up the sum of all fitness scores for this generation
         sum = 0
         for x in range(self.pop_size):
             sum += self.Agent_quiver[x].fitness_score
-        avg = sum // self.pop_size
-        print('Top fitness score: {}\nAverage fitness score: {}' .format(self.Agent_quiver[self.pop_size - 1].fitness_score, avg))
+        # Capture the average in the average_fitness member variable
+        self.average_fitness = sum // self.pop_size
+        # Capture the top score in the top_score member variable
+        self.top_score = self.Agent_quiver[self.pop_size - 1].fitness_score
+        print('Top fitness score: {}\nAverage fitness score: {}' .format(self.top_score, self.average_fitness)
 
-    # Once an population has completed a round of movement, reset them to the beginning of the maze
+    # Function for resetting the population at the maze entrance
+    # Once a population has completed a generation of movement, reset them to the beginning of the maze
     def reset(self):
         for x in range(self.pop_size):
             self.Agent_quiver[x].current_position = self.maze.MAZE_START
             self.Agent_quiver[x].current_orientation = self.maze.MAZE_START_ORIENTATION
             self.Agent_quiver[x].fitness_score = 0
 
-    # Move every agent in the population one step based on DNA index
+    # Function that moves every agent in the population one step based on DNA index
+    # Parameter:  DNA_index: integer that points to the index of the gene instruction that the population is currently following
     def move(self, DNA_index):
+        # Iterate through the agent quiver moving each individual agent
         for x in self.pop_size:
             self.Agent_quiver[x].move(DNA_index,self.maze)
 
     # This method selects the parents for the next generation using Roulette Wheel Selection
     # Implementation details referenced from: https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
     # In this method there is selection pressure towards fitter individuals but there is a chance for any agent to become a parent
+    # Return:  A list of integers that point to the indices of the agents in the corresponding agent list that will be chosen during crossover reproduction
     def selection(self):
-        # sum of all fitness values
+        # Declare a variable to add up all of the fitness scores of the population
         sum = 0
-        # add up all fitness scores
+        # Iterate through the population of agents adding up individual fitness scores
         for x in range(len(self.Agent_quiver)):
              sum += self.Agent_quiver[x].fitness_score
 
         # Recursively generate boundaries between 0 and 1 that split up the number space into probabilites for each agent
         # This way each agent will have certain probability to reproduce with those who have a higher fitness getting a larger chance to mate
         selection_boundaries = [0]
-        ## -1 is for the last element whose total rounds to 1 which is added after the loop is completed
+        # Iterate through the population adding an increasing sized float values to each index based on the fitness values with higher fitness values getting assigned a bigger chunk of the pie
+        ## The -1 in the for loop is for the last element whose total rounds to 1 which is added after the loop is completed
         for i in range(len(self.Agent_quiver) - 1):
             # add the previous fitness proportion to the current fitness proportion to get a new boundary
             selection_boundaries.append(selection_boundaries[i] + ((self.Agent_quiver[i].fitness_score)/sum))
@@ -94,56 +110,57 @@ class Population:
         # The number line between 0 and 1 is split into n different sections in between boundaries corresponding to the probability of selection
         # Now a random number is chosen between 0 and 1 to see which parents get selected
        
-        # This holds the indices that point to selected parents from the original populations quiver
+        # List holding the indices that point to selected parents from the original population 
         parent_indices = []
+        # Variable used to prevent an agent from mating with itself
         previously_selected_parent = None
         x = 0
+        # Begin a loop that will traverse the population
         while x < self.pop_size:
             # This random selection will occur n times where n = population size
             r = random.random()
-            # find the index of the parent that got randomly selected
+            # Find the index of the parent that got randomly selected
             selected_parent_index = findClosest(selection_boundaries, len(selection_boundaries), r)
 
-            # prevent self-mating
-            # if same parent is selcted two times in a row, go through loop again to select a new parent
+            # Prevent self-mating
+            # If same parent is selcted two times in a row, go through loop again to select a new parent
             if (selected_parent_index == previously_selected_parent):
                 # decrement loop counter to ensure N parents are selected
                 x -= 1
                 print("Parent cannot mate with itself")
             # else if the selected parent is a different agent then the previously selected agent, add to selection list
             else:
-                # add this index to the list of indices it was not just added
+                # Add this index to the list of indices to be selected
                 parent_indices.append(selected_parent_index)
-                # update previous selection for next round
+                # Update this selected parent to previous selection for the next round
                 previously_selected_parent = copy.deepcopy(selected_parent_index)
+            # Increment our loop counter
             x += 1
         # return a list of indices pointing to parents in Agent_quiver that should be sequentially iterated through to produce children
-        print(len(parent_indices))
         return parent_indices
-  
 
-    # This method removes the least fit agents from the population based on number of survivors defined in Population class
-    # This method is called each time new children have been created
+    # This method removes the least fit agents from the population based on number_of_survivors member variable
+    # This method is called each time new children have been created to create room in the population for the children to replace
     def kill_the_weak(self):
         # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have higher scores)
-        ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
+        ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
         # Now we kill a portion of the population
         # Let's initialize an array to hold the survivors
         Fittest = []
         # Now we iterate through the list of fitness sorted agents saving the fittest portion
         for agent in range((self.number_of_survivors)):
             Fittest.append(ordered_agents[agent])
-        # Copy over the fittest agents into the new quiver 
+        # Copy over the fittest agents into the new quiver
+        # Now the agent quiver will be half the size as it was when this function was called 
         self.Agent_quiver = copy.deepcopy(Fittest)
 
-        # most likely comment this out later
-        #return Fittest
-
+    # A function called after killing the weak from the population
+    # The function adds children to the fit population to get back up to pop_size
+    # Parameter:   children: a list of agents produced from the crossing of two parent agents during reproduction
     def add_children(self, children):
-        #self.pop_size // 2
+        # For as many children as there are in the children list, append a child to the agent quiver
         for x in range(len(children)):
             self.Agent_quiver.append(children[x])
-
     
     # Function to define DNA crossover reproduction
     # Because the directional order of an agent's movements will lead to
@@ -157,69 +174,67 @@ class Population:
     # We then place that random strand at a random location within the child's DNA sequence.
     # At that point we begin filling in the rest of the child's DNA structure with 
     # p2's DNA
+    # Return:  new_pop: a list of agents resulting from the mating of selected parent agents
     def crossover(self):
-        # We begin by killing the weakest half of the population
+        # We begin by initiating the selection by which the population of agents that has just
+        # completed the maze is assessed based on their fitness score and using probabilities
+        # chosen to participate in the reproduction process.  Every agent in the population 
+        # has the statistical chance to make it into the selected_parents list, but agents
+        # with the higher fitness scores have a higher probability of getting selected
+
+        # Initiate the selection function to choose parents for reproduction
         selected_parents = self.selection()
 
         # Initialize an array to hold our new crossover generation of children
         new_pop = []
-
-        # The self.kill_the_weak() funciton call provides us with the surviving
-        # parents that we've selected and in an array in randomized order.
         
         # Now we can start the reproductive process.  This will be a pretty detailed
-        # for loop that will iterate through the shuffled parent list 
+        # for loop that will iterate through the selected parent list 
         # combining specific DNA segments and genes to create children.
         # Each iteration of the first nested loop combines 2 agents from 
-        # the parent array and creates a child.
-        # variable i will be tied to p1 and j will be tied to p2
+        # the selected_parents list and creates a child.
+        # iterator i will follow p1 and j will follow p2
         j = 1
+        # The 3rd argument in the range function causes the i iterator to increment by 2 every loop
+        # Both i and j iterators need to be incremented by 2 every time because each loop iteration
+        # combines parents from neighboring indices two at a time
         for i in range(0, len(selected_parents), 2):
-            #print("This iteration of the mating loop i is: " + str(i))
-            #print("This iteration of j is: " + str(j))
             # Initialize a dynamic array that will hold the specific sequence of DNA
             # from p1 that will be passed to the child
             DNA_holder = []
 
             # Create a random integer from 50 to the size of an agent's DNA strand
             # We will pull a strand of DNA of this random size from p1
-            # TODO This current implementation allows a randomization of the length of 
-            # the DNA strand we're going to pull from p1 from 50 - full size of 
-            # an agent's DNA structure.  We may want to consider putting a limit on 
-            # how large of a strand is pulled from p1?  Having too large of a chunk of  
-            # p1's DNA may really limit p2's influence in the DNA of the children.  
-            # But my initial thoughts are that using randomly generated values during every             
-            # reproduction should generate enough variety that a few reproductions resulting 
-            # from p1-dominated genes shouldn't have too much of an effect on the overall generation
-            p1_strand_length = random.randint(50, self.Agent_quiver[selected_parents[i]].DNA_length)            
-            #print("This iteration the p1 strand length is " + str(p1_strand_length))
+            p1_strand_length = random.randint(50, self.Agent_quiver[selected_parents[i]].DNA_length)
 
             # Create a random integer from 0 up to the size of p1's DNA genes 
-            # that are not getting pulled to represent the index 
-            # where we will place the DNA strand from p1
+            # that are not getting pulled to represent the index where we will
+            # pull the DNA strand from p1 and also the index where we will place 
+            # the DNA strand from p1 into the new child DNA structure.
             # In other words, we're going to pluck the random sized DNA
             # segment from p1 beginning at a random location in p1's DNA
             # structure, and the following variable will help us place that same 
             # DNA segment beginning at the same index in the child
             p1_DNA_start_index = random.randint(0, (self.Agent_quiver[selected_parents[i]].DNA_length - p1_strand_length))
-            #print("This iteration the p1 start index is " + str(p1_DNA_start_index))
             # We need to preserve this starting index despite needing to iterate across it
             # in an upcoming loop, so we establish a deep copy
             p1_DNA_start_index_deepCopy = copy.deepcopy(p1_DNA_start_index)
 
-            # Next we create an array that will hold the DNA structure of this new child
+            # Next we initialize a list that will hold the DNA structure of this new child
             new_child_DNA = []
 
             # Iterate through the p1 DNA structure capturing a chunk of size p1_strand_length
             # beginning at the random index number catpured in p1_DNA_start_index
             while p1_DNA_start_index_deepCopy < (p1_strand_length + p1_DNA_start_index):
-                # Hold the DNA segment of p1. p1 is represented by Agent_quiver[i]
+                # Hold the DNA segment of p1. p1 is represented by self.Agent_quiver[selected_parents[i]]
                 DNA_holder.append(self.Agent_quiver[selected_parents[i]].DNA[p1_DNA_start_index_deepCopy])
+                # Increment the iterator
                 p1_DNA_start_index_deepCopy += 1
 
-            # Now we need to begin building the child's DNA structure
-            # We begin by adding to it the DNA strand from p1 that we've
-            # just captured in DNA_holder beginning at the same index as p1
+            # Now that we have p1's DNA accounted for, we need to begin 
+            # building the child's DNA structure.
+            # We begin inserting into the child DNA structure the DNA strand 
+            # from p1 that we've just captured in DNA_holder beginning at the same index as p1
             
             # Recalibrate the index iterating variable
             p1_DNA_start_index_deepCopy = copy.deepcopy(p1_DNA_start_index)
@@ -232,56 +247,34 @@ class Population:
                 # Add to the child's DNA structure the strand from p1 by inserting it 
                 # starting at the same index that the strand began in p1 
                 new_child_DNA.insert(p1_DNA_start_index_deepCopy, DNA_holder[k])
-                # Increment your index iterator and counter variables
+                # Increment your index iterator and counter variable
                 p1_DNA_start_index_deepCopy += 1
                 k += 1
             
             # Now that the child has received the DNA it will take from p1, 
             # we need to fill in the remaining DNA elements with genes
-            # from the DNA structure of p2
-            # If by chance the p1 strand fit perfectly at the end of the child's
-            # DNA structure, then we need to start from the beginning filling
-            # in the blanks.  Otherwise, we start at the first index past where
-            # the DNA from p1 ended.
-            # Declare x to represent the last index of the strand we pulled from p1  
+            # from the DNA structure of p2.
+            # Begin by initializing a variable that will point to the index that 
+            # falls directly after the last index filled with p1 DNA
             x = p1_DNA_start_index + p1_strand_length
-            #print("First index after end of strip = " + str(x))
-            # WHILE WE'RE INBETWEEN THE END OF THE P1 STRAND AND THE 500TH GENE
+            
+            # Iterate as long as we're in between the end of the p1 strand and the 500th gene 
             while (x < self.Agent_quiver[selected_parents[i]].DNA_length):
-                #print("Latter end filling")
                 # keep loading indices from p2 into the corresponding indices in the child DNA array
                 new_child_DNA.insert(x, self.Agent_quiver[selected_parents[j]].DNA[x])
                 x += 1
-                #if (x == self.Agent_quiver[j].DNA_length - 1):
-                 #   print("The last index filled is " + str(x))
 
+            # Now wrap back around to the beginning of the child DNA list filling in any indices 
+            # that are open and lie before the p1 DNA strand begins
             y = 0
             while(y < p1_DNA_start_index):
-                #print("Front half filling")
+                # Keep loading indices from p2 into the corresponding indices in the child DNA array
                 new_child_DNA.insert(y, self.Agent_quiver[selected_parents[j]].DNA[y])
                 y += 1
 
-                # Begin a loop to fill the latter indices of the child array from
-                # corresponding indices of p2 beginning 1 index past the p1 strand
-                #x = p1_DNA_start_index + p1_strand_length - 1
-                # While we haven't reached the end of p2's DNA structure
-                # TESTING: z = 1
-                #while x < self.Agent_quiver[j].DNA_length:
-                # TESTING: print("After filling up the latter indices, child DNA is this big: " + str(len(new_child_DNA)))
-                # Now that we've filled up the end of the child DNA structure,
-                # we come back around to the front end and fill each index up to
-                # the index that lands directly before the p1 strand begins
-
-            # Now that we've filled up the latter end of the new child DNA with corresponding
-            # genes from p2, we need to wrap around and fill in the front end of the DNA structure
-            # Declare a counter variable
-            y = 0
-            while(y < p1_DNA_start_index):
-                new_child_DNA.insert(y, self.Agent_quiver[j].DNA[y])
-                y += 1
-
-            # Now we create a new child infusing them with the DNA resulting
-            # from the above reproduction process
+            # We now have a list of DNA genes that is an ordered mixture of 2 parents
+            # Now we create a new child infusing them with the DNA resulting from the
+            # crossover reproduction process
             new_child = Agent.Agent(self.maze, self.agent_DNA_length, new_child_DNA)
 
             # The last part of the reproductive process is to introduce mutation
@@ -300,7 +293,7 @@ class Population:
                     # Mutate this child
                     new_child.mutate()
 
-            # This elif loop will catch generations 10 - 20 and initiate mutation 10% of the time
+            # This elif loop will catch generations 11 - 20 and initiate mutation 10% of the time
             elif self.global_gen_counter > 10 and self.global_gen_counter < 21:
                 # If this randomly generated float is less than .10, that represents 
                 # a 10% chance of happening, so in this case we initiate mutation
@@ -322,7 +315,7 @@ class Population:
             # need to add the child from this iteration to our new population
             new_pop.append(new_child)
 
-            # We need to increment our i and j variables an extra digit so that they jump 2 indices every loop
+            # We need to increment our j variable an extra digit so that it jumps 2 indices every loop
             j += 2
 
         # Let's increment the generation counter before we return from this method
