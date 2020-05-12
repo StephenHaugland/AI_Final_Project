@@ -19,6 +19,7 @@ class Agent:
     DNA_length = 500            # Variable representing the length of an agent's DNA structure
     fitness_score = 0           # Stores the agents overall fitness score computed after the final movement
     DNA_mutate_strand = (DNA_length // 10) # A holder variable that captures an integer value representing 10 percent of an agent's DNA
+    agent_hit_wall = 0
 
     #########################################
     #### Class Methods 
@@ -140,7 +141,7 @@ class Agent:
             self.current_position = copy.deepcopy(next_position)
         # However, if the next position is occupied by an obstacle the agent can't move
         else:
-            pass
+            self.agent_hit_wall += 1
         # Return the flag status of this movement
         return changed_position
 
@@ -229,21 +230,58 @@ class Agent:
 
 
 
-    # -------------------- END OF ALTERNATIVE MUTATION IMPLENTATION
+    # -------------------- END OF ALTERNATIVE MUTATION IMPLENTATION ---------------------
 
     # Test function to display DNA
     def print_DNA(self):
         print(self.DNA)
 
+    # # Function that calculates an agent's fitness at the conclusion of a generation of maze navigating
+    # # Parameters:  maze: 2D array that the agent is navigating
+    # def calculate_fitness(self, maze):
+    #     # calculate distance from final agent position to maze exit
+    #     # d = sqrt((mazeX - agentX)^2 + (mazeY-agentY)^2)
+    #     # save operation complexity by not square rooting
+    #     distance = (abs(maze.MAZE_EXIT[1] - self.current_position[1])) + (abs(maze.MAZE_EXIT[0] - self.current_position[0]))
+    #     # arbitrary number chosen to subtract distance from to make fitter agents have higher scores
+    #     score = 100 - distance
+    #     self.fitness_score = score   
+
+    
+    
+    #-------------------- ADDING A NEW POTENTIAL VARIATION ON OUR FITNESS FUNCTION ---------------
+
     # Function that calculates an agent's fitness at the conclusion of a generation of maze navigating
     # Parameters:  maze: 2D array that the agent is navigating
     def calculate_fitness(self, maze):
+
+        # Begin by tallying the positive fitness score by rewarding
+        # the movements of agents that avoid obstacles and traverse
+        # closer to the maze exit
         # calculate distance from final agent position to maze exit
         # d = sqrt((mazeX - agentX)^2 + (mazeY-agentY)^2)
         # save operation complexity by not square rooting
         distance = (abs(maze.MAZE_EXIT[1] - self.current_position[1])) + (abs(maze.MAZE_EXIT[0] - self.current_position[0]))
-        # arbitrary number chosen to subtract distance from to make fitter agents have higher scores
-        score = 100 - distance
-        self.fitness_score = score   
+        
+        # To avoid getting caught by a local minimum situation, let's give a bonus to 
+        # agents that at least make it half way through the maze
+        if distance > 35:
+            distance -= 5
+        
+        # Now we pick an arbitrary number to subtract our current fitness score (distance) 
+        # from this number to ensure that fitness scores will increase in value.
+        # Because the distance calculated above favors smaller distances, we use this 
+        # calculation to invert the values so that shorter distances from the maze exit
+        # are reflected with higher fitness scores
+        score = 200 - distance 
+        
+        # Finally we need to punish the agent for hitting the wall
+        # We subtract from the agent's positive distance score a point for every time they hit a wall
+        # We've incremented each agent's member variable to track their collisions
+        score -= self.agent_hit_wall
+        self.fitness_score = score
+         
+
+    #------------------- END OF ALTERNATIVE FITNESS FUNCTION DEFINITION -------------------------
 
 

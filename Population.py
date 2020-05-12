@@ -68,7 +68,7 @@ class Population:
         self.average_fitness = sum // self.pop_size
         # Capture the top score in the top_score member variable
         self.top_score = self.Agent_quiver[self.pop_size - 1].fitness_score
-        print('Top fitness score: {}\nAverage fitness score: {}' .format(self.top_score, self.average_fitness))
+        #print('Top fitness score: {}\nAverage fitness score: {}' .format(self.top_score, self.average_fitness))
 
     # Function for resetting the population at the maze entrance
     # Once a population has completed a generation of movement, reset them to the beginning of the maze
@@ -127,7 +127,7 @@ class Population:
             if (selected_parent_index == previously_selected_parent):
                 # decrement loop counter to ensure N parents are selected
                 x -= 1
-                print("Parent cannot mate with itself")
+                #print("Parent cannot mate with itself")
             # else if the selected parent is a different agent then the previously selected agent, add to selection list
             else:
                 # Add this index to the list of indices to be selected
