@@ -57,8 +57,8 @@ class Population:
         for x in range(len(self.Agent_quiver)):
             self.Agent_quiver[x].calculate_fitness(self.maze)
         # Sort the agent quiver by fitness scores from lowest at early indices to highest at latter indices
-        self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
-
+        self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
+        
     # Function for printing to console the top and average fitness score to monitor evolution progress
     def get_fitness_stats(self, screen):
 
@@ -109,7 +109,7 @@ class Population:
         # Capture the average in the average_fitness member variable
         self.average_fitness = sum // self.pop_size
         # Capture the top score in the top_score member variable
-        self.top_score = self.Agent_quiver[self.pop_size - 1].fitness_score
+        self.top_score = self.Agent_quiver[0].fitness_score
         # Finally, we copy the text surfaces to the screen at the rectangle's coordinates
         screen.blit(gen_title_text, gen_title_Rect) 
         screen.blit(gen_display_text, gen_display_Rect)

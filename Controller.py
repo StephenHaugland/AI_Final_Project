@@ -161,7 +161,7 @@ def highlight_parents(pop):
 # Instantiate a maze
 maze_instance = Maze.Maze()
 # Seed the first population to navigate the maze giving it (pop_size, maze object, DNA_length declaration)
-test_population = Population.Population(100, maze_instance, 200)
+test_population = Population.Population(100, maze_instance, 300)
 # setup pygame display
 pygame_setup(test_population.maze)
 # display the maze to the pygame window
