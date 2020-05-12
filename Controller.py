@@ -48,7 +48,7 @@ def draw_maze(maze):
             color = BLACK
             # Now we iterate through our 2 dimensional array and print obstacle locations in red              
             if maze.MAZE_GRID[row][column] == 1:
-                color = RED
+                color = BLUE
             # The pygame draw.rect function takes 3 primary arguments:
             # The first argument is the surface on which the rectangle will be drawn
             # The second is the desired color of the rectangle
@@ -88,7 +88,7 @@ def move_population_once(pop):
                 #Peek line 52 for draw.rect() argument explanation
                 pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[x].previous_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[x].previous_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
                 #update the new position to white
-                color = WHITE
+                color = RED
                 pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[x].current_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[x].current_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
                 # Update the screen with what has been drawn
                 pygame.display.update()
@@ -113,7 +113,7 @@ def reset_population(pop):
     # Draw all of the agents at the maze entrance
     for y in range(pop.pop_size):
         # update the new position to white
-        color = WHITE
+        color = RED
         pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[y].current_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[y].current_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
     # update what we've drawn
     pygame.display.update()
@@ -126,7 +126,7 @@ def highlight_weak(pop):
     # Declare a variable that will capture the weakest agents from a generation of an agent population
     fittest = pop.kill_the_weak()
     # Let's paint them red to the screen
-    color = RED
+    color = WHITE
     for x in range(len(fittest)):
         pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * fittest[x].current_position[0], maze_instance.CELL_SIZE * fittest[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
     # Update the screen with what has been drawn

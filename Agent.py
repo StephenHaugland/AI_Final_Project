@@ -153,41 +153,41 @@ class Agent:
     # (represented by DNA_mutate_strand) is 10%
     # No parameters
     # Return: self: the mutated agent
-    def mutate(self):
-        # We need to find a random starting index within this agent's DNA strand to begin the mutation
-        # We declare a variable that captures a random integer.  This random integer has to be 
-        # less than the difference between the length of the agent's DNA strand and the length
-        # of the mutating strand so that we can mutate from any random index within the DNA sequence
-        start_index = random.randint(0, (len(self.DNA) - self.DNA_mutate_strand))
+    # def mutate(self):
+    #     # We need to find a random starting index within this agent's DNA strand to begin the mutation
+    #     # We declare a variable that captures a random integer.  This random integer has to be 
+    #     # less than the difference between the length of the agent's DNA strand and the length
+    #     # of the mutating strand so that we can mutate from any random index within the DNA sequence
+    #     start_index = random.randint(0, (len(self.DNA) - self.DNA_mutate_strand))
         
-        # Initialize an array that will hold the DNA sequence to be scrambled
-        mutation_sequence = []
+    #     # Initialize an array that will hold the DNA sequence to be scrambled
+    #     mutation_sequence = []
 
-        # Now we begin filling our mutation array with the specific sequence
-        # of DNA from this agent that will be scrambled
-        # Iterate through this agent's DNA sequence for the length of the
-        # predetermined mutation DNA sequence
-        # We need our iterator to start at zero on account of array indices beginning at zero
-        i = 0
-        # Initialize a loop that will iterate once for every gene in the mutation strand
-        for i in range(self.DNA_mutate_strand - 1):
-            # Load the mutation sequence array with the agent's DNA sequnence
-            # beginning at the random starting index
-            mutation_sequence.append(self.DNA[(start_index + i)])
+    #     # Now we begin filling our mutation array with the specific sequence
+    #     # of DNA from this agent that will be scrambled
+    #     # Iterate through this agent's DNA sequence for the length of the
+    #     # predetermined mutation DNA sequence
+    #     # We need our iterator to start at zero on account of array indices beginning at zero
+    #     i = 0
+    #     # Initialize a loop that will iterate once for every gene in the mutation strand
+    #     for i in range(self.DNA_mutate_strand - 1):
+    #         # Load the mutation sequence array with the agent's DNA sequnence
+    #         # beginning at the random starting index
+    #         mutation_sequence.append(self.DNA[(start_index + i)])
 
-        # Now that we've captured the strand to be scrambled, we scramble it
-        random.shuffle(mutation_sequence)
+    #     # Now that we've captured the strand to be scrambled, we scramble it
+    #     random.shuffle(mutation_sequence)
 
-        # Now that the sequence has been scrambled, we can put it back
-        k = 0
-        # Initialize a loop that will iterate once for every gene in the strand that has now been mutated
-        for k in range(self.DNA_mutate_strand - 1):
-            # Find the place in the agent's DNA strand where the mutation sequence was pulled
-            # and start at that index replacing indices with the scrambled values
-            self.DNA[(start_index + k)] = mutation_sequence[k]
+    #     # Now that the sequence has been scrambled, we can put it back
+    #     k = 0
+    #     # Initialize a loop that will iterate once for every gene in the strand that has now been mutated
+    #     for k in range(self.DNA_mutate_strand - 1):
+    #         # Find the place in the agent's DNA strand where the mutation sequence was pulled
+    #         # and start at that index replacing indices with the scrambled values
+    #         self.DNA[(start_index + k)] = mutation_sequence[k]
 
-        # return the mutated agent
-        return self
+    #     # return the mutated agent
+    #     return self
 
     #-------- ADDING A NEW POTENTIAL VARIATION ON OUR CURRENT MUTATION IMPLEMENTATION-----------------------------------
 

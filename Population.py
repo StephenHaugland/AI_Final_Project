@@ -68,7 +68,7 @@ class Population:
         self.average_fitness = sum // self.pop_size
         # Capture the top score in the top_score member variable
         self.top_score = self.Agent_quiver[self.pop_size - 1].fitness_score
-        print('Top fitness score: {}\nAverage fitness score: {}' .format(self.top_score, self.average_fitness)
+        print('Top fitness score: {}\nAverage fitness score: {}' .format(self.top_score, self.average_fitness))
 
     # Function for resetting the population at the maze entrance
     # Once a population has completed a generation of movement, reset them to the beginning of the maze
