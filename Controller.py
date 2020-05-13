@@ -128,22 +128,44 @@ def text_objects(text, font):
 def button(msg,x,y,w,h,ic,ac,action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
-    print(click)
+    # mouse is on top of button, change color
     if x+w > mouse[0] > x and y+h > mouse[1] > y:
         pygame.draw.rect(screen, ac,(x,y,w,h))
 
         if click[0] == 1 and action != None:
-            action()         
+            # display text on button and return color to inactive
+            pygame.draw.rect(screen, ic,(x,y,w,h))
+            smallText = pygame.font.SysFont("comicsansms",20)
+            textSurf, textRect = text_objects(msg, smallText)
+            textRect.center = ( (x+(w//2)), (y+(h//2)) )
+            screen.blit(textSurf, textRect)
+            # perform passed in function
+            action()
+                     
     else:
+        #draw button with inactive color
         pygame.draw.rect(screen, ic,(x,y,w,h))
 
+    # display text on button
     smallText = pygame.font.SysFont("comicsansms",20)
     textSurf, textRect = text_objects(msg, smallText)
-    textRect.center = ( (x+(w/2)), (y+(h/2)) )
+    textRect.center = ( (x+(w//2)), (y+(h//2)) )
     screen.blit(textSurf, textRect)
 
+# first function called before main game loop is started
+def game_intro():
+    intro = True
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        button("Start",600,435,80,50,WHITE,RED,game_loop)
+        pygame.display.update()
 
-  
+
+
+'''
 ######### Highlight all the agents that are selected to get eaten ###########
 # A fun, miscellaneous function that highlights on the screen the agents with the lowest fitness at the end of a generation
 # Parameter:  pop: a population object representing a population of agents traversing the maze
@@ -171,26 +193,10 @@ def highlight_parents(pop):
     # Update the screen with what has been drawn
     pygame.display.update()
     pygame.time.delay(3000)
-
+'''
 
 
 #------------------ Main object declarations and implementation begin here -------------------------------
-
-# Instantiate a maze
-maze_instance = Maze.Maze()
-# Seed the first population to navigate the maze giving it (pop_size, maze object, DNA_length declaration)
-test_population = Population.Population(150, maze_instance, 200)
-# setup pygame display
-pygame_setup(test_population.maze)
-# display the maze to the pygame window
-draw_maze(test_population.maze)
-
-
-# begin = False
-# while not begin:
-#     # create a start button
-#     button("Start",150,150,50,200,RED,BLUE)
-#     pygame.display.update()
 
 
 
@@ -208,68 +214,85 @@ draw_maze(test_population.maze)
 #########################################################
 
 # ----------------- Start of Main Program Loop ----------------------------------------------------
+# Instantiate a maze
+maze_instance = Maze.Maze()
+# Seed the first population to navigate the maze giving it (pop_size, maze object, DNA_length declaration)
+test_population = Population.Population(100, maze_instance, 175)
+# setup pygame display
+pygame_setup(test_population.maze)
+# display the maze to the pygame window
+draw_maze(test_population.maze)
 
 done_moving = False     # The flag that allows the maze to loop until the user clicks the close button
 actionNumber = 0        # This is the DNA index for the agent to execute each loop
-FPS = 250               # defines game loop frames per second; lower numbers can be used to more closely observe agent movement
+FPS = 1000               # defines game loop frames per second; lower numbers can be used to more closely observe agent movement
 exited = False          # Flag holding the screen open
 
-# Begin a loop that runs for as many generations as you use as an argument for the range function
-for generation in range(100):
-    # While the user hasn't clicked the exit button and the generation is still navigating through their DNA sequences
-    while ((not exited) and (not done_moving)):
-        # Define how many frames per second the simulation runs at
-        clock.tick(FPS) # should be called once per frame
-        # Checks if exit is clicked on
-        for event in pygame.event.get():  
-            # First, if the user clicks the close button, we need to close the window down
-            if event.type == pygame.QUIT:
-                # by changing the loop flag to True
-                exited = True
-
-        #####################
-        # Population movement
-        #####################
-        
-        # move the entire population one step forward
-        move_population_once(test_population)
-        
-    # Only continue with program, if window has not been exited
-    if not exited:
-        # RESET variables so next generation can be spawned into the maze
-        done_moving = False
-        actionNumber = 0
-        # Clear the maze
-        clear_screen(test_population)
-        
-        ######################
-        ## Calculate Fitess
-        ######################
-        test_population.calculate_fitness()
-        test_population.get_fitness_stats(screen)      
-
-        #####################################################################
-        ## Select Parents and Produce children through crossover and mutation
-        #####################################################################
-        children = test_population.crossover()
-        
-
-        ##########################
-        ## Kill the weakest agents
-        ##########################
-        test_population.kill_the_weak()
-
-        #############################
-        ## Reset for next generation
-        #############################
-        
-        test_population.add_children(children)
-        # move all agents back to the start of the maze
-        test_population.reset(screen)
-        
-        print(test_population.global_gen_counter)
+# main game loop where evolution of populations take place
+def game_loop():
     
-# --------  End of Main Program Loop -----------
+    global done_moving, actionNumber, FPS, exited
 
-# Be IDLE friendly. If you forget this line, the program will 'hang' on exit.
-pygame.quit()
+    # Begin a loop that runs for as many generations as you use as an argument for the range function
+    for generation in range(200):
+        # While the user hasn't clicked the exit button and the generation is still navigating through their DNA sequences
+        while ((not exited) and (not done_moving)):
+            # Define how many frames per second the simulation runs at
+            clock.tick(FPS) # should be called once per frame
+            # Checks if exit is clicked on
+            for event in pygame.event.get():  
+                # First, if the user clicks the close button, we need to close the window down
+                if event.type == pygame.QUIT:
+                    # by changing the loop flag to True
+                    exited = True
+
+            #####################
+            # Population movement
+            #####################
+            
+            # move the entire population one step forward
+            move_population_once(test_population)
+            
+        # Only continue with program, if window has not been exited
+        if not exited:
+            # RESET variables so next generation can be spawned into the maze
+            done_moving = False
+            actionNumber = 0
+            # Clear the maze
+            clear_screen(test_population)
+            
+            ######################
+            ## Calculate Fitess
+            ######################
+            test_population.calculate_fitness()
+            test_population.get_fitness_stats(screen)      
+
+            #####################################################################
+            ## Select Parents and Produce children through crossover and mutation
+            #####################################################################
+            children = test_population.crossover()
+            
+
+            ##########################
+            ## Kill the weakest agents
+            ##########################
+            test_population.kill_the_weak()
+
+            #############################
+            ## Reset for next generation
+            #############################
+            
+            test_population.add_children(children)
+            # move all agents back to the start of the maze
+            test_population.reset(screen)
+            
+            print(test_population.global_gen_counter)
+        
+    # --------  End of Main Program Loop -----------
+
+    # Be IDLE friendly. If you forget this line, the program will 'hang' on exit.
+    pygame.quit()
+    quit()
+
+# Start the program
+game_intro()

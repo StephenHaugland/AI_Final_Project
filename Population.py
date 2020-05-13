@@ -57,50 +57,50 @@ class Population:
         for x in range(len(self.Agent_quiver)):
             self.Agent_quiver[x].calculate_fitness(self.maze)
         # Sort the agent quiver by fitness scores from lowest at early indices to highest at latter indices
-        self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True) # TODO: This code doesn't do what the above comment says, sorted() defaults to ascending order sort so reversing it makes it descending
+        self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False) 
         
     # Function for printing to console the top and average fitness score to monitor evolution progress
     def get_fitness_stats(self, screen):
 
         # Colors
-        TEAL = (0, 128, 128)       # Stat counters
+        TEAL = (200, 200, 200)       # Stat counters
         BLACK = (0, 0, 0)          # Background color
 
         # Create our font objects to give our display boxes a font and font size
         # The 1st parameter is the font file which pygame contains and the second parameter is the font size
-        gen_title_font = pygame.font.Font('freesansbold.ttf', 24) 
-        gen_display_font = pygame.font.Font('freesansbold.ttf', 24)
-        ave_title_font = pygame.font.Font('freesansbold.ttf', 24)
-        ave_display_font = pygame.font.Font('freesansbold.ttf', 24)
-        top_score_title_font = pygame.font.Font('freesansbold.ttf', 24)
-        top_score_display_font = pygame.font.Font('freesansbold.ttf', 24)
+        stats_font = pygame.font.Font('freesansbold.ttf', 24) 
+        # gen_display_font = pygame.font.Font('freesansbold.ttf', 24)
+        # ave_title_font = pygame.font.Font('freesansbold.ttf', 24)
+        # ave_display_font = pygame.font.Font('freesansbold.ttf', 24)
+        # top_score_title_font = pygame.font.Font('freesansbold.ttf', 24)
+        # top_score_display_font = pygame.font.Font('freesansbold.ttf', 24)
 
         # Create our text surfaces on which our fonts will be applied
         # 1st parameter is what gets written, 2nd is a special pygame antialias boolean
         # that needs to be set to True, the 3rd is the font color, and the 4th is the background color 
-        gen_title_text = gen_title_font.render('Currently featuring generation: ', True, TEAL, BLACK)
-        gen_display_text = gen_display_font.render(str(self.global_gen_counter + 1), True, TEAL, BLACK)
-        ave_title_text = gen_title_font.render('Previous generation average fitness: ', True, TEAL, BLACK)
-        ave_display_text = ave_display_font.render(str(self.average_fitness), True, TEAL, BLACK)
-        top_score_title_text = top_score_title_font.render('Previous generation top score: ', True, TEAL, BLACK)
-        top_score_display_text = top_score_display_font.render(str(self.top_score), True, TEAL, BLACK) 
+        gen_title_text = stats_font.render('Currently featuring generation: ' + str(self.global_gen_counter + 1), True, TEAL, BLACK)
+        # gen_display_text = gen_display_font.render(str(self.global_gen_counter + 1), True, TEAL, BLACK)
+        ave_title_text = stats_font.render('Previous generation average fitness: ' + str(self.average_fitness), True, TEAL, BLACK)
+        # ave_display_text = ave_display_font.render(str(self.average_fitness), True, TEAL, BLACK)
+        top_score_title_text = stats_font.render('Previous generation top score: ' + str(self.top_score), True, TEAL, BLACK)
+        # top_score_display_text = top_score_display_font.render(str(self.top_score), True, TEAL, BLACK) 
 
         # Now we create rectangle objects for our text surfaces to be placed in
         gen_title_Rect = gen_title_text.get_rect() 
-        gen_display_Rect = gen_display_text.get_rect()
+        # gen_display_Rect = gen_display_text.get_rect()
         ave_title_Rect = ave_title_text.get_rect()
-        ave_display_Rect = ave_display_text.get_rect()
+        # ave_display_Rect = ave_display_text.get_rect()
         top_score_title_Rect = top_score_title_text.get_rect()
-        top_score_display_Rect = top_score_display_text.get_rect() 
+        # top_score_display_Rect = top_score_display_text.get_rect() 
 
         # Now we place our rectangles on our maze: 1st parameter is the x coordinate of the upper left corner of the rectangle
         # The 2nd parameter is the y coordinate of the upper left corner of the rectangle
         gen_title_Rect.center = (280, 430)
-        gen_display_Rect.center = (480, 430)
+        # gen_display_Rect.center = (480, 430)
         ave_title_Rect.center = (250 , 460)
-        ave_display_Rect.center = (490 , 460)
+        # ave_display_Rect.center = (490 , 460)
         top_score_title_Rect.center = (280 , 490)
-        top_score_display_Rect.center = (488 , 490) 
+        # top_score_display_Rect.center = (488 , 490) 
 
         # Begin by adding up the sum of all fitness scores for this generation
         sum = 0
@@ -109,14 +109,14 @@ class Population:
         # Capture the average in the average_fitness member variable
         self.average_fitness = sum // self.pop_size
         # Capture the top score in the top_score member variable
-        self.top_score = self.Agent_quiver[0].fitness_score
+        self.top_score = self.Agent_quiver[self.pop_size - 1].fitness_score
         # Finally, we copy the text surfaces to the screen at the rectangle's coordinates
         screen.blit(gen_title_text, gen_title_Rect) 
-        screen.blit(gen_display_text, gen_display_Rect)
+        # screen.blit(gen_display_text, gen_display_Rect)
         screen.blit(ave_title_text, ave_title_Rect)
-        screen.blit(ave_display_text, ave_display_Rect)
+        # screen.blit(ave_display_text, ave_display_Rect)
         screen.blit(top_score_title_text, top_score_title_Rect)
-        screen.blit(top_score_display_text, top_score_display_Rect)
+        # screen.blit(top_score_display_text, top_score_display_Rect)
 
     # Function for resetting the population at the maze entrance
     # Once a population has completed a generation of movement, reset them to the beginning of the maze
@@ -195,17 +195,20 @@ class Population:
     # This method removes the least fit agents from the population based on number_of_survivors member variable
     # This method is called each time new children have been created to create room in the population for the children to replace
     def kill_the_weak(self):
-        # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have higher scores)
-        ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
-        # Now we kill a portion of the population
-        # Let's initialize an array to hold the survivors
-        Fittest = []
-        # Now we iterate through the list of fitness sorted agents saving the fittest portion
+        # # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have higher scores)
+        # ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
+        # # Now we kill a portion of the population
+        # # Let's initialize an array to hold the survivors
+        # Fittest = []
+        # # Now we iterate through the list of fitness sorted agents saving the fittest portion
+        # for agent in range((self.number_of_survivors)):
+        #     Fittest.append(ordered_agents[agent])
+        # # Copy over the fittest agents into the new quiver
+        # # Now the agent quiver will be half the size as it was when this function was called 
+        # self.Agent_quiver = copy.deepcopy(Fittest)
+        # self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
         for agent in range((self.number_of_survivors)):
-            Fittest.append(ordered_agents[agent])
-        # Copy over the fittest agents into the new quiver
-        # Now the agent quiver will be half the size as it was when this function was called 
-        self.Agent_quiver = copy.deepcopy(Fittest)
+            del self.Agent_quiver[agent]
 
     # A function called after killing the weak from the population
     # The function adds children to the fit population to get back up to pop_size
@@ -213,7 +216,8 @@ class Population:
     def add_children(self, children):
         # For as many children as there are in the children list, append a child to the agent quiver
         for x in range(len(children)):
-            self.Agent_quiver.append(children[x])
+            # self.Agent_quiver.append(children[x])
+            self.Agent_quiver.append(copy.deepcopy(children[x]))
     
     # Function to define DNA crossover reproduction
     # Because the directional order of an agent's movements will lead to
