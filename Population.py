@@ -447,18 +447,3 @@ def getClosest(val1, val2, index1, index2, target):
 ##################################################################################
 
 
-# ------------------------ TEST AREA ------------------------------------------
-
-# agent_holder_arr = []
-# test_agent_pop = 50
-# for x in range(test_agent_pop):
-#     test_bot = Agent.Agent(Maze.Maze(), 500) 
-#     agent_holder_arr.append(test_bot)
-    
-# Test_pop = Population(test_agent_pop, Maze.Maze(),500)
-# Test_pop.Agent_quiver = agent_holder_arr
-
-# Test_pop.crossover()
-
-    
-

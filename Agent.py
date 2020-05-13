@@ -190,9 +190,7 @@ class Agent:
     #     # return the mutated agent
     #     return self
 
-    #-------- ADDING A NEW POTENTIAL VARIATION ON OUR CURRENT MUTATION IMPLEMENTATION-----------------------------------
-
-
+    #-------- Alternative variation to our mutation function as of Monday 5-11 -----------------------------------
 
     # Function that gives definition to an agent's DNA mutation
     # In this implementation, we use a new DNA sequence version 
@@ -249,7 +247,10 @@ class Agent:
 
     
     
-    #-------------------- ADDING A NEW POTENTIAL VARIATION ON OUR FITNESS FUNCTION ---------------
+    #-------------------- Alternative variation to our fitness function as of 5-11 ---------------
+    # This variation penalizes an agent for hitting the wall and for not at least making 
+    # it halfway across the maze
+
 
     # Function that calculates an agent's fitness at the conclusion of a generation of maze navigating
     # Parameters:  maze: 2D array that the agent is navigating
