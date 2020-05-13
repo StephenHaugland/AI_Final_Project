@@ -14,8 +14,8 @@ class Agent:
     #########################################
 
     current_orientation = 0     # Specifies which direction the agent is facing, utilizing unit circle degrees
-    previous_position = [1,20]  # Store the agent's previous position to repaint black on the screen
-    current_position = [1,20]   # Variable holding the agent's current position, which will begin at the maze entrance
+    previous_position = [1,20]  # Store the agent's previous position to repaint black on the screen. In the form of [x,y]
+    current_position = [1,20]   # Variable holding the agent's current position, which will begin at the maze entrance. In the form of [x,y]
     DNA_length = 500            # Variable representing the length of an agent's DNA structure
     fitness_score = 0           # Stores the agents overall fitness score computed after the final movement
     DNA_mutate_strand = (DNA_length // 10) # A holder variable that captures an integer value representing 10 percent of an agent's DNA
@@ -28,7 +28,7 @@ class Agent:
     # Agent constructor includes two implementations of agents
     # One for the first generation, and one for subsequent generations
     # Parameters:  maze: a maze object that this agent will be connected to
-    #              dna_length: an integer representing this agent's DNA sequence lengt
+    #              dna_length: an integer representing this agent's DNA sequence length
     #              DNA_array: a list of string values representing this agent's genes
     def __init__(self, maze, dna_length, DNA_array = None):
         # Overloading constructors in Python involves handling all possible
@@ -46,18 +46,15 @@ class Agent:
             # generate 50 random actions/movements to seed the first generation
             for _ in range(self.DNA_length):
                 self.DNA.append(random.choice(['L', 'F', 'R']))
-            # spawn the agent at the start of the maze
-            self.current_position = copy.deepcopy(maze.MAZE_START)
-            self.previous_position = copy.deepcopy(maze.MAZE_START)
         # Now we turn to the secondary implementaiton for agents which happens
         # during reproduction when a new child is born
         else:
             # Another constructor to be used in the crossover function for creating new agents
             # This constructor takes an array of DNA resulting from reproduction between 2 parents
             self.DNA = DNA_array    # Give this agent his new DNA sequence
-            # spawn the agent at the start of the maze
-            self.current_position = copy.deepcopy(maze.MAZE_START)
-            self.previous_position = copy.deepcopy(maze.MAZE_START)
+        # spawn the agent at the start of the maze
+        self.current_position = copy.deepcopy(maze.MAZE_START)
+        self.previous_position = copy.deepcopy(maze.MAZE_START)
 
     # Update the agent's orientation according to which direction it turns
     # Parameters:  dir: A char containing one of 3 directions ('L' for left, 'R' for right, or 'F' for straight forward)
@@ -75,14 +72,15 @@ class Agent:
             self.current_orientation = 0 
 
     # Calculates the next position if movement were to be carried out
-    # Parameter:  action: A char representing the agent's next positional movement
-    # Return:     next_pos: A 2 dimensional list containing the next maze location where the agent will move
+    # Parameter:  action: A char representing the agent's next directional movement
+    # Return:     next_pos: A list containing the next maze coordinates where the agent will move in the form of [x,y]
     def calculate_next_pos(self, action):
         # Begin by setting next position variable equal to the agent's current position
-        # next_pos is a 2 dimensional array with the first dimension tracking the x direction and the second dimension tracking the y direction
+        # next_pos is an array with the first element tracking the x direction and the second element tracking the y direction
         # So next_pos[0] adjustments move agent left and right, while next_pos[1] adjustments move agent up and down
+        # Start the next position at the current position and make modifications from there
         next_pos = copy.deepcopy(self.current_position)
-        # If the agent is currently facing up/north, determine where to turn him depending on the next positional movement
+        # If the agent is currently facing up/north, determine its next position based on its current action
         if self.current_orientation == 90 or self.current_orientation == -270:
             if action == 'F':
                 next_pos[1] -= 1
@@ -90,7 +88,7 @@ class Agent:
                 next_pos[0] -= 1
             elif action == 'R':
                 next_pos[0] += 1
-        # If the agent is currently facing down/south, determine where to turn him depending on the next positional movement
+        # If the agent is currently facing down/south, determine its next position based on its current action
         elif self.current_orientation == 270 or self.current_orientation == -90:
             if action == 'F':
                 next_pos[1] += 1
@@ -98,7 +96,7 @@ class Agent:
                 next_pos[0] += 1
             elif action == 'R':
                 next_pos[0] -= 1
-        # If the agent is currently facing right/east, determine where to turn him depending on the next positional movement
+        # If the agent is currently facing right/east, determine its next position based on its current action
         elif self.current_orientation == 0 or self.current_orientation == -360 or self.current_orientation == 360:
             if action == 'F':
                 next_pos[0] += 1
@@ -106,7 +104,7 @@ class Agent:
                 next_pos[1] -= 1
             elif action == 'R':
                 next_pos[1] += 1
-        # If the agent is currently facing left/west, determine where to turn him depending on the next positional movement
+        # If the agent is currently facing left/west,determine its next position based on its current action
         elif self.current_orientation == 180 or self.current_orientation == -180:
             if action == 'F':
                 next_pos[0] -= 1
@@ -114,10 +112,7 @@ class Agent:
                 next_pos[1] += 1
             elif action == 'R':
                 next_pos[1] -= 1
-        
-        # change orientation according to what action took place
-        self.turn(action)
-
+        # return the next position in the form [x,y]
         return next_pos
 
     # Function that moves the agent to its next position if a wall is not present
@@ -125,7 +120,7 @@ class Agent:
     #             maze: 2D maze array that the agent is navigating
     # Return:     changed_position: the next maze location where the agent will step to
     def move(self, action_iterator, maze):
-        # Establish a boolean flag that will help us track whether or not the agent has changed position
+        # Establish a boolean flag that stores whether or not the agent has changed position, assume no movement
         changed_position = False
         # Determine next position by capturing the next gene representing a directional movement
         action = self.DNA[action_iterator]
@@ -142,6 +137,9 @@ class Agent:
         # However, if the next position is occupied by an obstacle the agent can't move
         else:
             self.agent_hit_wall += 1
+
+        # Regardless of if the agents changed positions, update its orientation accordingly
+        self.turn(action)  
         # Return the flag status of this movement
         return changed_position
 
