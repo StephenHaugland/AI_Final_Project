@@ -57,7 +57,7 @@ class Population:
         for x in range(len(self.Agent_quiver)):
             self.Agent_quiver[x].calculate_fitness(self.maze)
         # Sort the agent quiver by fitness scores from lowest at early indices to highest at latter indices
-        self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True) # TODO: This code doesn't do what the above comment says, sorted() defaults to ascending order sort so reversing it makes it descending
+        self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False) 
         
     # Function for printing to console the top and average fitness score to monitor evolution progress
     def get_fitness_stats(self, screen):
@@ -109,7 +109,7 @@ class Population:
         # Capture the average in the average_fitness member variable
         self.average_fitness = sum // self.pop_size
         # Capture the top score in the top_score member variable
-        self.top_score = self.Agent_quiver[0].fitness_score
+        self.top_score = self.Agent_quiver[self.pop_size - 1].fitness_score
         # Finally, we copy the text surfaces to the screen at the rectangle's coordinates
         screen.blit(gen_title_text, gen_title_Rect) 
         screen.blit(gen_display_text, gen_display_Rect)
@@ -195,17 +195,20 @@ class Population:
     # This method removes the least fit agents from the population based on number_of_survivors member variable
     # This method is called each time new children have been created to create room in the population for the children to replace
     def kill_the_weak(self):
-        # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have higher scores)
-        ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
-        # Now we kill a portion of the population
-        # Let's initialize an array to hold the survivors
-        Fittest = []
-        # Now we iterate through the list of fitness sorted agents saving the fittest portion
+        # # Begin by aligning the population of agents from the fittest to the weakest (Fitter agents have higher scores)
+        # ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
+        # # Now we kill a portion of the population
+        # # Let's initialize an array to hold the survivors
+        # Fittest = []
+        # # Now we iterate through the list of fitness sorted agents saving the fittest portion
+        # for agent in range((self.number_of_survivors)):
+        #     Fittest.append(ordered_agents[agent])
+        # # Copy over the fittest agents into the new quiver
+        # # Now the agent quiver will be half the size as it was when this function was called 
+        # self.Agent_quiver = copy.deepcopy(Fittest)
+        # self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
         for agent in range((self.number_of_survivors)):
-            Fittest.append(ordered_agents[agent])
-        # Copy over the fittest agents into the new quiver
-        # Now the agent quiver will be half the size as it was when this function was called 
-        self.Agent_quiver = copy.deepcopy(Fittest)
+            del self.Agent_quiver[agent]
 
     # A function called after killing the weak from the population
     # The function adds children to the fit population to get back up to pop_size
@@ -213,7 +216,8 @@ class Population:
     def add_children(self, children):
         # For as many children as there are in the children list, append a child to the agent quiver
         for x in range(len(children)):
-            self.Agent_quiver.append(children[x])
+            # self.Agent_quiver.append(children[x])
+            self.Agent_quiver.append(copy.deepcopy(children[x]))
     
     # Function to define DNA crossover reproduction
     # Because the directional order of an agent's movements will lead to
