@@ -9,6 +9,7 @@ class Maze:
     MAZE_EXIT = [70, 20]
     MAZE_START = [2, 20]
 
+    # Default orientation is for agents to spawn in facing 0 (Right)
     MAZE_START_ORIENTATION = 0
 
     # This sets the WIDTH and HEIGHT of each grid square
@@ -21,7 +22,7 @@ class Maze:
     # THIS WILL BE A LARGE AREA OF LISTS WITH 1's REPRESENTING OBSTACLES AND 0's REPRESENTING FREE CELLS
     # OUR MAZE WILL BE 700 UNITS IN THE X-DIRECTION AND 410 UNITS IN THE Y-DIRECTION
     # WHILE THE FOLLOWING DEFINITION REPRESENTS THE FILLING OF EVERY CELL IN THE 700x410 MAZE,
-    # WE SCALE THE GRID SO THAT EVERY GRID CELL LOCATION WILL BE A 10X10 BLOCK
+    # WE SCALE THE GRID SO THAT EVERY GRID CELL LOCATION WILL BE A 10X10 PIXEL BLOCK
     # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     MAZE_GRID = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 

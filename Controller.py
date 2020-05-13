@@ -78,7 +78,7 @@ def draw_maze(maze):
 # Function to move every agent in a population one time
 # Parameter:  pop: a population object representing the population of agents traversing the maze
 def move_population_once(pop):
-    # Boolean flace that gets set if an agent was able to move and changed positions
+    # Boolean flag that gets set if an agent was able to move and changed positions
     Moved = False
     # Declare a couple of global variables to track the agent's traversal through their DNA sequence 
     global actionNumber, done_moving
@@ -92,14 +92,14 @@ def move_population_once(pop):
             if Moved == True:
                 #change the previous position to black
                 color = BLACK
-                #Peek line 52 for draw.rect() argument explanation
+                #Peek line 59 for draw.rect() argument explanation
                 pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[x].previous_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[x].previous_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
-                #update the new position to white
+                #update the new position to Red
                 color = RED
                 pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[x].current_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[x].current_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
                 # Update the screen with what has been drawn
                 pygame.display.update()
-        # increment which DNA gene is firing, which action the agent is taking
+        # increment which DNA gene is firing (which action the agent is taking)
         actionNumber += 1
     # Now the agent has exhausted their sequence of gene instructions
     else:
@@ -119,7 +119,7 @@ def reset_population(pop):
 
     # Draw all of the agents at the maze entrance
     for y in range(pop.pop_size):
-        # update the new position to white
+        # update the new position to red
         color = RED
         pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[y].current_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[y].current_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
     # update what we've drawn

@@ -1,7 +1,8 @@
 # Stephen Haugland and Shane Snediker
 # Artificial Intelligence Spring 2020
-# This file creates a population of agents 
-# and defines the DNA crossover of successive populations, which initiates mutations 
+# This file contains the population class
+# Each population holds a list of agents and has the ability to reproduce through crossover and mutation
+
 
 import Maze         # Import user defined class that provides graphical maze data
 import Agent        # Import user defined class that defines individual agents
@@ -11,7 +12,7 @@ import copy         # Import Python copy library for making deep copies
 from operator import itemgetter, attrgetter # used in sorting agents by fitness score
 
 # Population class
-# Class for organinizing the agent population and reproduction
+# Class for organizing the agent population and reproduction
 class Population:
 
     #########################################
@@ -19,19 +20,19 @@ class Population:
     #########################################
 
     pop_size = None             # The size of each generation of agents
-    Agent_quiver = [None]       # An array eventually containing pop_size Agent objects
-    number_of_survivors = None  # A constant value representing the fittest agents
-    global_gen_counter = 1      # A counter that tracks how many generations throughout the simulation
+    Agent_quiver = []       # An array containing the current Agent objects in the population
+    number_of_survivors = None  # Value representing the amount of agents left alive after each round of evolution
+    global_gen_counter = 1      # A counter that tracks the current generation number
     agent_DNA_length = None     # Store how long the agents DNA strands are
-    maze = Maze.Maze()          # Maze object that the population is bound to
-    average_fitness = 100      # Double data type representing a generation's average fitness score
-    top_score = 120            # Integer representing this generation's top score
+    maze = None                 # Maze object that the population is bound to
+    average_fitness = 100       # Double data type representing a generation's average fitness score
+    top_score = 120             # Integer representing the generation's highest fitness score
 
     #########################################
     #### Class Methods 
     #########################################
 
-    # Population constructor to initiate a population of agents to traverse the maze
+    # Population constructor to initialize a population of agents to traverse the maze
     # Parameters:  size: An integer value representing the amount of agents in this population
     #              maze: A maze object representing the maze that this population will traverse
     #              dna_length: An integer value representing the amount of genes each agent in the population has
@@ -41,14 +42,9 @@ class Population:
         self.number_of_survivors = size // 2    # An integer value representing half of the population
         self.agent_DNA_length = dna_length      # The length of each agent's DNA sequence
         self.maze = maze                        # Connect this population to the maze
-        # Create a list to hold each of the agent objects for this population
-        agents = []
         # Fill up the agent list with agents
         for _ in range(size):
-            Agent007 = copy.deepcopy(Agent.Agent(self.maze, dna_length))
-            agents.append(Agent007)
-        # Save the list of agents just created as a quiver of agents for this population member variable
-        self.Agent_quiver = agents
+            self.Agent_quiver.append(copy.deepcopy(Agent.Agent(self.maze, dna_length)))
 
     # Function that calculates the fitness for every agent in the population
     # Should be called after after each round of movement
@@ -57,7 +53,7 @@ class Population:
         for x in range(len(self.Agent_quiver)):
             self.Agent_quiver[x].calculate_fitness(self.maze)
         # Sort the agent quiver by fitness scores from lowest at early indices to highest at latter indices
-        self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
+        self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True) # TODO: This code doesn't do what the above comment says, sorted() defaults to ascending order sort so reversing it makes it descending
         
     # Function for printing to console the top and average fitness score to monitor evolution progress
     def get_fitness_stats(self, screen):
@@ -136,7 +132,7 @@ class Population:
     # This method selects the parents for the next generation using Roulette Wheel Selection
     # Implementation details referenced from: https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_parent_selection.htm
     # In this method there is selection pressure towards fitter individuals but there is a chance for any agent to become a parent
-    # Return:  A list of integers that point to the indices of the agents in the corresponding agent list that will be chosen during crossover reproduction
+    # Return:  A list of integers that point to the indices of the agents in the corresponding Agent_quiver list that will be chosen during crossover reproduction
     def selection(self):
         # Declare a variable to add up all of the fitness scores of the population
         sum = 0
@@ -204,7 +200,7 @@ class Population:
 
     # A function called after killing the weak from the population
     # The function adds children to the fit population to get back up to pop_size
-    # Parameter:   children: a list of agents produced from the crossing of two parent agents during reproduction
+    # Parameter:   children: a list of agents produced from the crossing of parent agents during reproduction
     def add_children(self, children):
         # For as many children as there are in the children list, append a child to the agent quiver
         for x in range(len(children)):
@@ -325,37 +321,30 @@ class Population:
             # crossover reproduction process
             new_child = Agent.Agent(self.maze, self.agent_DNA_length, new_child_DNA)
 
+            
             # The last part of the reproductive process is to introduce mutation
             # We want to only introduce mutation a small percentage of the time.
             # Also, we want the percentage of time that a child's genes get mutated 
             # to be highest in the beginning generations and decrease with successive generations.
-
+            
             # We begin by capturing a random float between 0 and 1 which will be our probability
-            mutate_rate = random.random()
-            # Now we determine if this regeneration iteration is within the first
-            # 10 generations.  If so, we'll mutate new children at a rate of 15%
+            rand = random.random()
+            # Store the mutation rate which will be based on the generation iteration
+            mutation_rate = 0
+            # Now we determine if this is on of the first 10 generations. If so, we'll mutate new children at a rate of 15%
             if self.global_gen_counter < 11:
-                # If the randomly generated float is less than .15, that represents 
-                # a 15% chance of happening, so in this case we initiate mutation
-                if mutate_rate < .15:
-                    # Mutate this child
-                    new_child.mutate()
-
+                mutation_rate = .15
             # This elif loop will catch generations 11 - 20 and initiate mutation 10% of the time
             elif self.global_gen_counter > 10 and self.global_gen_counter < 21:
-                # If this randomly generated float is less than .10, that represents 
-                # a 10% chance of happening, so in this case we initiate mutation
-                if mutate_rate < .10:
-                    # Mutate this child
-                    new_child.mutate()
-
+                mutation_rate = .10
             # This else loop will catch all generations past 20 and initiate mutation 5% of the time
-            else:
-                # If this randomly generated float is less than .05, that represents 
-                # a 5% chance of happening, so in this case we initiate mutation
-                if mutate_rate < .05:
-                    # Mutate this child
-                    new_child.mutate()
+            else: 
+                mutation_rate = .05
+                
+            # If the randomly generated float is less than the mutation_rate
+            if rand < mutation_rate:
+                # Mutate this child
+                new_child.mutate()
 
             # Now that we've successfully crossed DNA from 2 parent agents to produce 
             # a child whose DNA is a combination of both of its parents, as well as
@@ -372,14 +361,16 @@ class Population:
         # return a new generation of agents
         return new_pop
 
-##########################################################
-# This code below is contributed by Smitha Dinesh Semwal 
-##########################################################
-# This code uses binary search to locate the closet element in a list to a target value
-# These two function defined below were found at: https://www.geeksforgeeks.org/find-closest-number-array/
-# All credit belongs to Smitha Dinesh Semwal
-#### Modification made to code to return the single index value that the target lies in
+#################################################################################
+# This code below is adapted from Smitha Dinesh Semwal to be used in selection() 
+# https://www.geeksforgeeks.org/find-closest-number-array/
+##################################################################################
+# This code uses binary search to locate the index of the closet element in a list to a target value
+# Modification made to code to return the single index value that the target lies in
 # Returns the index corresponding to the selected parent based on the random value passed into target 
+# Parameters: arr: array holding boundary locations from 0 to 1. 
+#             n = length of arr
+#             target: random float(0,1) used to randomly select parent        
 def findClosest(arr, n, target): 
   
     # Corner cases 
@@ -427,11 +418,6 @@ def findClosest(arr, n, target):
 # between these two. 
 def getClosest(val1, val2, index1, index2, target): 
   
-    # if (target - val1 >= val2 - target): 
-    #     return index2
-    # else: 
-    #     return index1
-
     # modified to return what index boundary the target lies in
     return index1
   
@@ -442,8 +428,9 @@ def getClosest(val1, val2, index1, index2, target):
 
 # print(findClosest(arr, n, target)) 
 
-##################################################################################
-# The code above is contributed by Smitha Dinesh Semwal, with slight modification 
-##################################################################################
+#######################################################################
+# The code above is adapted from by Smitha Dinesh Semwal
+# 
+#######################################################################
 
 
