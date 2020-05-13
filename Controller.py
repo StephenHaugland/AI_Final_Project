@@ -217,7 +217,7 @@ def highlight_parents(pop):
 # Instantiate a maze
 maze_instance = Maze.Maze()
 # Seed the first population to navigate the maze giving it (pop_size, maze object, DNA_length declaration)
-test_population = Population.Population(150, maze_instance, 200)
+test_population = Population.Population(100, maze_instance, 175)
 # setup pygame display
 pygame_setup(test_population.maze)
 # display the maze to the pygame window
@@ -225,7 +225,7 @@ draw_maze(test_population.maze)
 
 done_moving = False     # The flag that allows the maze to loop until the user clicks the close button
 actionNumber = 0        # This is the DNA index for the agent to execute each loop
-FPS = 250               # defines game loop frames per second; lower numbers can be used to more closely observe agent movement
+FPS = 1000               # defines game loop frames per second; lower numbers can be used to more closely observe agent movement
 exited = False          # Flag holding the screen open
 
 # main game loop where evolution of populations take place
