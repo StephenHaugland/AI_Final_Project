@@ -263,8 +263,8 @@ class Agent:
         
         # To avoid getting caught by a local minimum situation, let's give a bonus to 
         # agents that at least make it half way through the maze
-        if distance > 35:
-            distance -= 5
+        ## if distance > 35:
+        ##    distance -= 5
         
         # Now we pick an arbitrary number to subtract our current fitness score (distance) 
         # from this number to ensure that fitness scores will increase in value.
@@ -276,7 +276,7 @@ class Agent:
         # Finally we need to punish the agent for hitting the wall
         # We subtract from the agent's positive distance score a point for every time they hit a wall
         # We've incremented each agent's member variable to track their collisions
-        score -= self.agent_hit_wall
+        ## score -= self.agent_hit_wall
         self.fitness_score = score
          
 

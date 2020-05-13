@@ -11,6 +11,9 @@ import random       # Import Python random library for generating random numbers
 import copy         # Import Python copy library for making deep copies
 from operator import itemgetter, attrgetter # used in sorting agents by fitness score
 
+
+RED = (255,0,0)
+
 # Population class
 # Class for organizing the agent population and reproduction
 class Population:
@@ -27,6 +30,7 @@ class Population:
     maze = None                 # Maze object that the population is bound to
     average_fitness = 100       # Double data type representing a generation's average fitness score
     top_score = 120             # Integer representing the generation's highest fitness score
+    agent_color = RED           # Defines what color the agent will be displayed as
 
     #########################################
     #### Class Methods 
@@ -116,11 +120,16 @@ class Population:
 
     # Function for resetting the population at the maze entrance
     # Once a population has completed a generation of movement, reset them to the beginning of the maze
-    def reset(self):
+    def reset(self, screen):
         for x in range(self.pop_size):
             self.Agent_quiver[x].current_position = self.maze.MAZE_START
             self.Agent_quiver[x].current_orientation = self.maze.MAZE_START_ORIENTATION
             self.Agent_quiver[x].fitness_score = 0
+            self.agent_hit_wall = 0
+            # Draw all of the agents at the maze entrance
+            pygame.draw.rect(screen, self.agent_color, [self.maze.CELL_SIZE * self.Agent_quiver[x].current_position[0], self.maze.CELL_SIZE * self.Agent_quiver[x].current_position[1], self.maze.CELL_SIZE, self.maze.CELL_SIZE])
+        # update what we've drawn
+        pygame.display.update()
 
     # Function that moves every agent in the population one step based on DNA index
     # Parameter:  DNA_index: integer that points to the index of the gene instruction that the population is currently following
@@ -394,7 +403,7 @@ def findClosest(arr, n, target):
             # If target is greater than previous 
             # to mid, return closest of two 
             if (mid > 0 and target > arr[mid - 1]): 
-                return getClosest(arr[mid - 1], arr[mid], (mid-1), mid, target) 
+                return (mid-1)
   
             # Repeat for left half  
             j = mid 
@@ -402,31 +411,13 @@ def findClosest(arr, n, target):
         # If target is greater than mid 
         else : 
             if (mid < n - 1 and target < arr[mid + 1]): 
-                return getClosest(arr[mid], arr[mid + 1], mid, (mid + 1), target) 
+                return mid
                   
             # update i 
             i = mid + 1
           
     # Only single element left after search 
     return mid 
-  
-  
-# Method to compare which proportional value is closest to the target. 
-# We find the closest by taking the difference 
-# between the target and both values. It assumes 
-# that val2 is greater than val1 and target lies 
-# between these two. 
-def getClosest(val1, val2, index1, index2, target): 
-  
-    # modified to return what index boundary the target lies in
-    return index1
-  
-# Driver code 
-# arr = [0, 0.1, 0.25, 0.4, 0.6, 0.99, 1]  
-# n = len(arr) 
-# target = 1
-
-# print(findClosest(arr, n, target)) 
 
 #######################################################################
 # The code above is adapted from by Smitha Dinesh Semwal

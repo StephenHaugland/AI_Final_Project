@@ -107,24 +107,42 @@ def move_population_once(pop):
 
 # Function that resets the maze erasing the previous generation of agents and placing the new generation at the maze entrance
 # Parameter:  pop: a population object representing a population of agents traversing the maze
-def reset_population(pop):
+def clear_screen(pop):
     # Draw over all agents with black, clean the board
     for x in range(pop.pop_size):
         # change the previous position to black
         color = BLACK
         pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[x].current_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[x].current_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
-    
-    # Call the populatin reset function to replace all the agents at the start of the maze
-    pop.reset()
-
-    # Draw all of the agents at the maze entrance
-    for y in range(pop.pop_size):
-        # update the new position to red
-        color = RED
-        pygame.draw.rect(screen, color, [pop.maze.CELL_SIZE * pop.Agent_quiver[y].current_position[0], pop.maze.CELL_SIZE * pop.Agent_quiver[y].current_position[1], pop.maze.CELL_SIZE, pop.maze.CELL_SIZE])
     # update what we've drawn
     pygame.display.update()
-    pygame.time.delay(250)
+ 
+
+# Allows text objects to be generated using a string and a font
+def text_objects(text, font):
+    textSurface = font.render(text, True, BLACK)
+    return textSurface, textSurface.get_rect()
+
+ # Button function adapted from: https://pythonprogramming.net/pygame-button-function-events/
+ # creates a clickable button that executes a passed in function
+ # Params: msg: button text, x:x, y:y, w:width, h:height, ic:inactive color, ac:active color, action: on click function
+def button(msg,x,y,w,h,ic,ac,action=None):
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    print(click)
+    if x+w > mouse[0] > x and y+h > mouse[1] > y:
+        pygame.draw.rect(screen, ac,(x,y,w,h))
+
+        if click[0] == 1 and action != None:
+            action()         
+    else:
+        pygame.draw.rect(screen, ic,(x,y,w,h))
+
+    smallText = pygame.font.SysFont("comicsansms",20)
+    textSurf, textRect = text_objects(msg, smallText)
+    textRect.center = ( (x+(w/2)), (y+(h/2)) )
+    screen.blit(textSurf, textRect)
+
+
   
 ######### Highlight all the agents that are selected to get eaten ###########
 # A fun, miscellaneous function that highlights on the screen the agents with the lowest fitness at the end of a generation
@@ -161,15 +179,20 @@ def highlight_parents(pop):
 # Instantiate a maze
 maze_instance = Maze.Maze()
 # Seed the first population to navigate the maze giving it (pop_size, maze object, DNA_length declaration)
-test_population = Population.Population(100, maze_instance, 300)
+test_population = Population.Population(150, maze_instance, 200)
 # setup pygame display
 pygame_setup(test_population.maze)
 # display the maze to the pygame window
 draw_maze(test_population.maze)
 
 
-# TODO I think this might be where we will add code to allow the user to choose 
-# the amount of agents in the simulation
+# begin = False
+# while not begin:
+#     # create a start button
+#     button("Start",150,150,50,200,RED,BLUE)
+#     pygame.display.update()
+
+
 
 
 ########################################################
@@ -184,7 +207,6 @@ draw_maze(test_population.maze)
 # 8:    population.reset()
 #########################################################
 
-
 # ----------------- Start of Main Program Loop ----------------------------------------------------
 
 done_moving = False     # The flag that allows the maze to loop until the user clicks the close button
@@ -193,7 +215,7 @@ FPS = 250               # defines game loop frames per second; lower numbers can
 exited = False          # Flag holding the screen open
 
 # Begin a loop that runs for as many generations as you use as an argument for the range function
-for generation in range(50):
+for generation in range(100):
     # While the user hasn't clicked the exit button and the generation is still navigating through their DNA sequences
     while ((not exited) and (not done_moving)):
         # Define how many frames per second the simulation runs at
@@ -217,6 +239,8 @@ for generation in range(50):
         # RESET variables so next generation can be spawned into the maze
         done_moving = False
         actionNumber = 0
+        # Clear the maze
+        clear_screen(test_population)
         
         ######################
         ## Calculate Fitess
@@ -229,6 +253,7 @@ for generation in range(50):
         #####################################################################
         children = test_population.crossover()
         
+
         ##########################
         ## Kill the weakest agents
         ##########################
@@ -237,22 +262,14 @@ for generation in range(50):
         #############################
         ## Reset for next generation
         #############################
+        
         test_population.add_children(children)
-        reset_population(test_population)
+        # move all agents back to the start of the maze
+        test_population.reset(screen)
+        
+        print(test_population.global_gen_counter)
     
 # --------  End of Main Program Loop -----------
 
-
-######### Highlight the fittest x percentage of population ##################
-# top_percent = .20
-# color = BLUE
-# for x in range(test_population.pop_size - 1,int(round(test_population.pop_size * (1-top_percent))),-1):
-#     pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * test_population.Agent_quiver[x].current_position[0], maze_instance.CELL_SIZE * test_population.Agent_quiver[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
-# # Update the screen with what has been drawn
-# pygame.display.update()
-# pygame.time.delay(5000)
-
-
 # Be IDLE friendly. If you forget this line, the program will 'hang' on exit.
 pygame.quit()
-
