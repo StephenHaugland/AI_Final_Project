@@ -254,7 +254,7 @@ class Agent:
     # Function that calculates an agent's fitness at the conclusion of a generation of maze navigating
     # Parameters:  maze: 2D array that the agent is navigating
     def calculate_fitness(self, maze):
-
+        
         # Begin by tallying the positive fitness score by rewarding
         # the movements of agents that avoid obstacles and traverse
         # closer to the maze exit
@@ -273,7 +273,7 @@ class Agent:
         # Because the distance calculated above favors smaller distances, we use this 
         # calculation to invert the values so that shorter distances from the maze exit
         # are reflected with higher fitness scores
-        score = 200 - distance 
+        score = 300 - distance 
         
         # Finally we need to punish the agent for hitting the wall
         # We subtract from the agent's positive distance score a point for every time they hit a wall
@@ -283,5 +283,3 @@ class Agent:
          
 
     #------------------- END OF ALTERNATIVE FITNESS FUNCTION DEFINITION -------------------------
-
-
