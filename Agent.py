@@ -20,7 +20,7 @@ class Agent:
     DNA_length = 500            # Variable representing the length of an agent's DNA structure
     fitness_score = 0           # Stores the agents overall fitness score computed after the final movement
     DNA_mutate_strand = (DNA_length // 10) # A holder variable that captures an integer value representing 10 percent of an agent's DNA
-    agent_hit_wall = 0
+    agent_hit_wall = 0          # Variable that tracks how many time this agent hits the wall to assess a fitness penalty
 
     #########################################
     #### Class Methods 
