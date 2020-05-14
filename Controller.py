@@ -77,7 +77,9 @@ def draw_maze(maze):
 
 # Function to move every agent in a population one time
 # Parameter:  pop: a population object representing the population of agents traversing the maze
-def move_population_once(pop):
+#             a_divisor: divides amount of agents displayed by this number      (cuts down complexity for larger samples)
+#             dna_divisor: divides the amount of actions displayed by this number (cuts down complexity for larger samples)
+def move_population_once(pop,a_divisor = 1,dna_divisor = 1):
     # Boolean flag that gets set if an agent was able to move and changed positions
     Moved = False
     # Declare a couple of global variables to track the agent's traversal through their DNA sequence 
@@ -89,7 +91,8 @@ def move_population_once(pop):
             # Capture each agent in the population's movement status
             Moved = pop.Agent_quiver[x].move(actionNumber,pop.maze)
             # If an agent changes positions, update the screen
-            if Moved == True:
+            if (Moved == True) and (actionNumber % dna_divisor == 0) and ((x == (pop.pop_size -1)) or (x % a_divisor == 0)):
+                # pop.Agent_quiver[x] == pop.Agent_quiver[pop.pop_size-1]
                 #change the previous position to black
                 color = BLACK
                 #Peek line 59 for draw.rect() argument explanation
@@ -165,17 +168,17 @@ def game_intro():
 
 
 
-'''
+
 ######### Highlight all the agents that are selected to get eaten ###########
 # A fun, miscellaneous function that highlights on the screen the agents with the lowest fitness at the end of a generation
 # Parameter:  pop: a population object representing a population of agents traversing the maze
 def highlight_weak(pop):
     # Declare a variable that will capture the weakest agents from a generation of an agent population
-    fittest = pop.kill_the_weak()
+    weakest = pop.kill_the_weak()
     # Let's paint them red to the screen
-    color = WHITE
-    for x in range(len(fittest)):
-        pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * fittest[x].current_position[0], maze_instance.CELL_SIZE * fittest[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
+    color = RED
+    for x in range(len(weakest)):
+        pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * weakest[x].current_position[0], maze_instance.CELL_SIZE * weakest[x].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
     # Update the screen with what has been drawn
     pygame.display.update()
     pygame.time.delay(3000)
@@ -187,13 +190,13 @@ def highlight_parents(pop):
     # Capture selected parents
     selected = copy.deepcopy(pop.selection())
     # Paint them blue to the screen
-    color = BLUE
-    for x in range(len(selected) - 1):
+    color = WHITE
+    for x in range(len(selected)):
         pygame.draw.rect(screen, color, [maze_instance.CELL_SIZE * pop.Agent_quiver[selected[x]].current_position[0], maze_instance.CELL_SIZE * pop.Agent_quiver[selected[x]].current_position[1], maze_instance.CELL_SIZE, maze_instance.CELL_SIZE])
     # Update the screen with what has been drawn
     pygame.display.update()
     pygame.time.delay(3000)
-'''
+
 
 
 #------------------ Main object declarations and implementation begin here -------------------------------
@@ -202,7 +205,7 @@ def highlight_parents(pop):
 
 
 ########################################################
-# Basic Genetic Algorithm Pseudo Code from my understanding:
+# Basic Genetic Algorithm Pseudo Code:
 # 1: Seed first generation
 # 2: do while(TerminationCondition != True):
 # 3:    population.move()
@@ -217,7 +220,7 @@ def highlight_parents(pop):
 # Instantiate a maze
 maze_instance = Maze.Maze()
 # Seed the first population to navigate the maze giving it (pop_size, maze object, DNA_length declaration)
-test_population = Population.Population(100, maze_instance, 175)
+test_population = Population.Population(30, maze_instance, 300)
 # setup pygame display
 pygame_setup(test_population.maze)
 # display the maze to the pygame window
@@ -234,7 +237,7 @@ def game_loop():
     global done_moving, actionNumber, FPS, exited
 
     # Begin a loop that runs for as many generations as you use as an argument for the range function
-    for generation in range(200):
+    for generation in range(100000):
         # While the user hasn't clicked the exit button and the generation is still navigating through their DNA sequences
         while ((not exited) and (not done_moving)):
             # Define how many frames per second the simulation runs at
@@ -251,7 +254,7 @@ def game_loop():
             #####################
             
             # move the entire population one step forward
-            move_population_once(test_population)
+            move_population_once(test_population,1,1)
             
         # Only continue with program, if window has not been exited
         if not exited:
@@ -266,7 +269,7 @@ def game_loop():
             ######################
             test_population.calculate_fitness()
             test_population.get_fitness_stats(screen)      
-
+            # highlight_parents(test_population)
             #####################################################################
             ## Select Parents and Produce children through crossover and mutation
             #####################################################################
@@ -276,6 +279,7 @@ def game_loop():
             ##########################
             ## Kill the weakest agents
             ##########################
+            # highlight_weak(test_population)
             test_population.kill_the_weak()
 
             #############################
@@ -286,7 +290,8 @@ def game_loop():
             # move all agents back to the start of the maze
             test_population.reset(screen)
             
-            print(test_population.global_gen_counter)
+            print("Current generation: " + str(test_population.global_gen_counter))
+            print("Avg fitness: " + str(test_population.average_fitness) + "Top Fitness: " + str(test_population.top_score))
         
     # --------  End of Main Program Loop -----------
 

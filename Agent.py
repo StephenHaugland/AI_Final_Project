@@ -4,6 +4,7 @@
 
 import random   # Used for randomly seeding DNA
 import copy     # Used to create deep copy of variables
+import math     # Used to calculate distance
 
 # Agent class
 # This class contains all data pertaining to the individual agents that will be navigating our maze
@@ -126,9 +127,14 @@ class Agent:
         action = self.DNA[action_iterator]
         # Calculate the next position of this agent based on the DNA instruction
         next_position = self.calculate_next_pos(action)
-        # If the next position is not blocked, move there
-        # Check to see if the next grid location contains an obstacle
-        if maze.MAZE_GRID[next_position[1]][next_position[0]] == 0:
+        
+        # if agent makes it to exit, increase fitness score to incentivize getting there ASAP
+        if (self.current_position[0] == maze.MAZE_EXIT[0] and self.current_position[1] == maze.MAZE_EXIT[1]) or (next_position[0] == maze.MAZE_EXIT[0] and next_position[1] == maze.MAZE_EXIT[1]):
+            print("Agent made it to exit!!!!!!!!!!!!! ")
+            # for every round of movement before the end of the DNA, add 5 points per "saved" action
+            self.fitness_score += 5
+        # Check to see if the next grid location contains an obstacle, if not blocked move there
+        elif maze.MAZE_GRID[next_position[1]][next_position[0]] == 0:
             # Set the flag to represent the agent's movement
             changed_position = True
             # since movement has occured, change previous position to current and update current to the next position
@@ -137,6 +143,7 @@ class Agent:
         # However, if the next position is occupied by an obstacle the agent can't move
         else:
             self.agent_hit_wall += 1
+
 
         # Regardless of if the agents changed positions, update its orientation accordingly
         self.turn(action)  
@@ -260,25 +267,25 @@ class Agent:
         # calculate distance from final agent position to maze exit
         # d = sqrt((mazeX - agentX)^2 + (mazeY-agentY)^2)
         # save operation complexity by not square rooting
-        distance = (abs(maze.MAZE_EXIT[1] - self.current_position[1])) + (abs(maze.MAZE_EXIT[0] - self.current_position[0]))
-        
+        #distance = math.sqrt(((maze.MAZE_EXIT[1] - self.current_position[1])** 2) + ((maze.MAZE_EXIT[0] - self.current_position[0])** 2 ))
+        distance = (abs(maze.MAZE_EXIT[1] - self.current_position[1])) + (abs(maze.MAZE_EXIT[0] - self.current_position[0]) )
         # To avoid getting caught by a local minimum situation, let's give a bonus to 
         # agents that at least make it half way through the maze
-        ## if distance > 35:
-        ##    distance -= 5
+        if distance > 35:
+           distance -= 5
         
         # Now we pick an arbitrary number to subtract our current fitness score (distance) 
         # from this number to ensure that fitness scores will increase in value.
         # Because the distance calculated above favors smaller distances, we use this 
         # calculation to invert the values so that shorter distances from the maze exit
         # are reflected with higher fitness scores
-        score = 300 - distance 
+
         
         # Finally we need to punish the agent for hitting the wall
         # We subtract from the agent's positive distance score a point for every time they hit a wall
         # We've incremented each agent's member variable to track their collisions
-        ## score -= self.agent_hit_wall
-        self.fitness_score = score
+        #score = score - (.25 * self.agent_hit_wall)
+        self.fitness_score += (100 - distance)
          
 
     #------------------- END OF ALTERNATIVE FITNESS FUNCTION DEFINITION -------------------------

@@ -31,6 +31,7 @@ class Population:
     average_fitness = 100       # Double data type representing a generation's average fitness score
     top_score = 120             # Integer representing the generation's highest fitness score
     agent_color = RED           # Defines what color the agent will be displayed as
+    mutation_rate = 0.5         # Probability of mutation occuring after crossover
 
     #########################################
     #### Class Methods 
@@ -62,27 +63,33 @@ class Population:
     # Function for printing to console the top and average fitness score to monitor evolution progress
     def get_fitness_stats(self, screen):
 
+        # Begin by adding up the sum of all fitness scores for this generation
+        sum = 0
+        for x in range(self.pop_size):
+            sum += self.Agent_quiver[x].fitness_score
+        # Capture the average in the average_fitness member variable
+        self.average_fitness = sum // self.pop_size
+        # Capture the top score in the top_score member variable
+        self.top_score = self.Agent_quiver[self.pop_size - 1].fitness_score
+
+        ################### Display stats to the screen ##################
+        
         # Colors
-        TEAL = (200, 200, 200)       # Stat counters
+        GREY = (200, 200, 200)       # Stat counters
         BLACK = (0, 0, 0)          # Background color
 
         # Create our font objects to give our display boxes a font and font size
         # The 1st parameter is the font file which pygame contains and the second parameter is the font size
         stats_font = pygame.font.Font('freesansbold.ttf', 24) 
-        # gen_display_font = pygame.font.Font('freesansbold.ttf', 24)
-        # ave_title_font = pygame.font.Font('freesansbold.ttf', 24)
-        # ave_display_font = pygame.font.Font('freesansbold.ttf', 24)
-        # top_score_title_font = pygame.font.Font('freesansbold.ttf', 24)
-        # top_score_display_font = pygame.font.Font('freesansbold.ttf', 24)
-
+        
         # Create our text surfaces on which our fonts will be applied
         # 1st parameter is what gets written, 2nd is a special pygame antialias boolean
         # that needs to be set to True, the 3rd is the font color, and the 4th is the background color 
-        gen_title_text = stats_font.render('Currently featuring generation: ' + str(self.global_gen_counter + 1), True, TEAL, BLACK)
+        gen_title_text = stats_font.render('Currently featuring generation: ' + str(self.global_gen_counter + 1), True, GREY, BLACK)
         # gen_display_text = gen_display_font.render(str(self.global_gen_counter + 1), True, TEAL, BLACK)
-        ave_title_text = stats_font.render('Previous generation average fitness: ' + str(self.average_fitness), True, TEAL, BLACK)
+        ave_title_text = stats_font.render('Previous generation average fitness: ' + str(self.average_fitness), True, GREY, BLACK)
         # ave_display_text = ave_display_font.render(str(self.average_fitness), True, TEAL, BLACK)
-        top_score_title_text = stats_font.render('Previous generation top score: ' + str(self.top_score), True, TEAL, BLACK)
+        top_score_title_text = stats_font.render('Previous generation top score: ' + str(self.top_score), True, GREY, BLACK)
         # top_score_display_text = top_score_display_font.render(str(self.top_score), True, TEAL, BLACK) 
 
         # Now we create rectangle objects for our text surfaces to be placed in
@@ -102,14 +109,6 @@ class Population:
         top_score_title_Rect.center = (280 , 490)
         # top_score_display_Rect.center = (488 , 490) 
 
-        # Begin by adding up the sum of all fitness scores for this generation
-        sum = 0
-        for x in range(self.pop_size):
-            sum += self.Agent_quiver[x].fitness_score
-        # Capture the average in the average_fitness member variable
-        self.average_fitness = sum // self.pop_size
-        # Capture the top score in the top_score member variable
-        self.top_score = self.Agent_quiver[self.pop_size - 1].fitness_score
         # Finally, we copy the text surfaces to the screen at the rectangle's coordinates
         screen.blit(gen_title_text, gen_title_Rect) 
         # screen.blit(gen_display_text, gen_display_Rect)
@@ -117,6 +116,7 @@ class Population:
         # screen.blit(ave_display_text, ave_display_Rect)
         screen.blit(top_score_title_text, top_score_title_Rect)
         # screen.blit(top_score_display_text, top_score_display_Rect)
+
 
     # Function for resetting the population at the maze entrance
     # Once a population has completed a generation of movement, reset them to the beginning of the maze
@@ -199,16 +199,18 @@ class Population:
         # ordered_agents = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = True)
         # # Now we kill a portion of the population
         # # Let's initialize an array to hold the survivors
-        # Fittest = []
+        weak = []
         # # Now we iterate through the list of fitness sorted agents saving the fittest portion
-        # for agent in range((self.number_of_survivors)):
-        #     Fittest.append(ordered_agents[agent])
+        for x in range((self.number_of_survivors)):
+             weak.append(self.Agent_quiver[x])
         # # Copy over the fittest agents into the new quiver
         # # Now the agent quiver will be half the size as it was when this function was called 
         # self.Agent_quiver = copy.deepcopy(Fittest)
         # self.Agent_quiver = sorted(self.Agent_quiver, key = attrgetter('fitness_score'), reverse = False)
         for agent in range((self.number_of_survivors)):
             del self.Agent_quiver[agent]
+
+        return weak
 
     # A function called after killing the weak from the population
     # The function adds children to the fit population to get back up to pop_size
@@ -242,6 +244,8 @@ class Population:
         # Initiate the selection function to choose parents for reproduction
         selected_parents = self.selection()
 
+        self.mutation_rate = .15
+        
         # Initialize an array to hold our new crossover generation of children
         new_pop = []
         
@@ -343,19 +347,23 @@ class Population:
             # We begin by capturing a random float between 0 and 1 which will be our probability
             rand = random.random()
             # Store the mutation rate which will be based on the generation iteration
-            mutation_rate = 0
-            # Now we determine if this is on of the first 10 generations. If so, we'll mutate new children at a rate of 15%
-            if self.global_gen_counter < 11:
-                mutation_rate = .15
-            # This elif loop will catch generations 11 - 20 and initiate mutation 10% of the time
-            elif self.global_gen_counter > 10 and self.global_gen_counter < 21:
-                mutation_rate = .10
-            # This else loop will catch all generations past 20 and initiate mutation 5% of the time
-            else: 
-                mutation_rate = .05
+            
+            
+            # # Now we determine if this is on of the first 10 generations. If so, we'll mutate new children at a rate of 15%
+            # if self.global_gen_counter < 26:
+            #     mutation_rate = .15
+            # # This elif loop will catch generations 11 - 20 and initiate mutation 10% of the time
+            # elif self.global_gen_counter > 25 and self.global_gen_counter < 50:
+            #     mutation_rate = .10
+            # #     # This elif loop will catch generations 21 - 30 and initiate mutation 10% of the time
+            # # elif self.global_gen_counter > 20 and self.global_gen_counter < 31:
+            # #     mutation_rate = .007
+            # # # This else loop will catch all generations past 20 and initiate mutation 5% of the time
+            # else: 
+            #     mutation_rate = .05
                 
             # If the randomly generated float is less than the mutation_rate
-            if rand < mutation_rate:
+            if rand < self.mutation_rate:
                 # Mutate this child
                 new_child.mutate()
 
@@ -370,6 +378,9 @@ class Population:
 
         # Let's increment the generation counter before we return from this method
         self.global_gen_counter += 1
+        # decrement mutation rate by 1 percent each round until reached .02
+        if (self.mutation_rate > .05):
+            self.mutation_rate -= .005
 
         # return a new generation of agents
         return new_pop
