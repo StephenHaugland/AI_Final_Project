@@ -6,6 +6,8 @@ This is a repository containing an artificial intelligence final project.  It is
 
 We used a 2 dimensional array to construct a grid of 0's and 1's.  The 1's on the grid represent maze obstacles and the 0's represent open space.  We utilize the Python Pygame library to draw the maze onto a popup screen.  The bots enter the maze on the far left side of the screen and the goal is to navigate through the maze obstacles to the exit on the far right hand side of the screen.
 
+![Maze Screenshot](https://github.com/shaners1106/AI_Final_Project/Images/Maze.PNG)
+
 ## Encoding
 
 We initialize a seed population with an initial DNA consisting of completely random navigational directives.  We hold the "genes" in a 1 dimensional array.  Once the population size is predetermined a seed population of agents is initialized each given an initial random DNA sequence of instructions ('L', 'R', or 'F').
