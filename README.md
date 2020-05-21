@@ -6,7 +6,7 @@ This is a repository containing an artificial intelligence final project.  It is
 
 We used a 2 dimensional array to construct a grid of 0's and 1's.  The 1's on the grid represent maze obstacles and the 0's represent open space.  We utilize the Python Pygame library to draw the maze onto a popup screen.  The bots enter the maze on the far left side of the screen and the goal is to navigate through the maze obstacles to the exit on the far right hand side of the screen.
 
-![Maze Screenshot](https://github.com/shaners1106/AI_Final_Project/Images/Maze.PNG)
+![Maze Screenshot](https://github.com/shaners1106/AI_Final_Project/blob/master/Images/Maze.PNG)
 
 ## Encoding
 
