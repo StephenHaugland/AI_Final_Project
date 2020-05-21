@@ -1,6 +1,6 @@
 # AI_Final_Project
 
-This is a repository containing an artificial intelligence final project created by myself and Stephen Haugland.  It is a genetic algorithms project written in Python. The algorithm is loosely based on the principles of natural selection and evolution.  The goal was to create artificial bots that would navigate a maze, reproduce, and learn to improve navigation of the maze in successive generations. The key application of genetic algorithms to the field of AI is the ability of the algorithm to search a space of potential solutions to find optimal solutions to a given problem.  Given the right problem, a genetic algorithm can compute a predominant solution much quicker and with much more efficiency than a human.
+This is a repository containing an artificial intelligence final project.  It is a genetic algorithms project written in Python. The algorithm is loosely based on the principles of natural selection and evolution.  The goal was to create artificial bots that would navigate a maze, reproduce, and learn to improve navigation of the maze in successive generations. The key application of genetic algorithms to the field of AI is the ability of the algorithm to search a space of potential solutions to find optimal solutions to a given problem.  Given the right problem, a genetic algorithm can compute a predominant solution much quicker and with much more efficiency than a human.
 
 ## The maze
 
