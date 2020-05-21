@@ -28,6 +28,12 @@ At this point the population enters the reproductive process. Because an agent's
 
 Mutation is critical for persistent genetic variety which helps your algorithm avoid local maxima.  Within the crossover process, we subject every new child to the possibility of mutation according to a random number generator that is tied to probabilities.  For the first 10 generations of agents, every new baby bot has a 15% chance of getting mutated.  For generations 11-20 every new baby bot has a 10% chance of getting mutated.  And every generation thereafter the baby bots have a 5% chance of mutation.  Our method of mutation is to pull a strand of DNA that is 10% of the total DNA sequence from a random location within the sequence and randomly generate completely new DNA instructions. 
 
+## Convergence
+
+The whole point of a genetic algorithm is to extract optimal solutions to a given problem space.  The attached video shows the bots converging on optimal solutions to navigating the maze.
+
+![Maze Convergence](https://github.com/shaners1106/AI_Final_Project/blob/master/Images/GA_Demo_Late_Generations_mp4)
+
 ### Authors
 
 Shane Snediker: https://www.github.com/shaners1106
